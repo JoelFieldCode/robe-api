@@ -4,17 +4,19 @@ import Item from "../../models/item";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
-  const items = await Item.find({});
+  const items = await Item.find({ user_id: req.context.user_id });
   return res.json(items);
 });
 
 router.post("/", async (req: Request, res: Response) => {
   const { name, price, url, category } = req.body;
+  const { user_id } = req.context;
   const item = new Item({
     name,
     price,
     url,
-    category
+    category,
+    user_id
   });
 
   try {
