@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import bearerToken from "express-bearer-token";
 import cors from "cors";
 import ItemsRouter from "./routes/item";
+import CategoryRouter from "./routes/category";
 import authMiddleware from "./middleware/auth";
 import errorMiddleware from "./middleware/errorMiddleware";
 import HttpException from "./exceptions/HttpException";
@@ -36,13 +37,14 @@ app.use((req: Request, res: Response, next: NextFunction) =>
 const port = process.env.SERVER_PORT; // default port to listen
 
 mongoose.connect(process.env.DATABASE_URL, {
-  useNewUrlParser: true
+  useNewUrlParser: true,
 });
 const db = mongoose.connection;
-db.on("error", error => console.error(error));
+db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("connected to database"));
 
 app.use("/item", ItemsRouter, authMiddleware);
+app.use("/category", CategoryRouter, authMiddleware);
 app.use((err: HttpException, req: Request, res: Response, next: NextFunction) =>
   errorMiddleware(err, req, res, next)
 );

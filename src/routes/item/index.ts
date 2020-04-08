@@ -32,7 +32,7 @@ router.post("/", async (req: Request, res: Response) => {
     price,
     url,
     category,
-    user_id
+    user_id,
   });
 
   try {
