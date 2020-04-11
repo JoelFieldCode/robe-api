@@ -28,9 +28,10 @@ router.get(
   "/:id/items",
   async (req: Request, res: Response, next: NextFunction) => {
     const pool = new Pool();
+    // todo query against user_id too
     const categories = await pool.query(
-      "SELECT * FROM items WHERE category_id = $1",
-      [req.params.id]
+      "SELECT * FROM items WHERE category_id = $1 AND user_id = $2",
+      [req.params.id, req.context.user_id]
     );
     return res.json(categories.rows);
   }
