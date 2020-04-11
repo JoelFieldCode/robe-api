@@ -9,6 +9,7 @@
     "prestart": "npm run build",
     "start": "node .",
     "start:watch": "nodemon src/index.ts",
+    "seed": "node src/database/generate.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
