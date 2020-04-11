@@ -1,46 +1,35 @@
 import { Request, Response, Router, NextFunction } from "express";
-import Item from "../../models/item";
 import HttpException from "../../exceptions/HttpException";
+import { Pool, Client } from "pg";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
-  const items = await Item.find({ user_id: req.context.user_id });
-  return res.json(items);
+  const pool = new Pool();
+  const categories = await pool.query(
+    "SELECT * from items WHERE user_id = $1",
+    [req.context.user_id]
+  );
+  return res.json(categories.rows);
 });
 
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const item = await Item.findById(req.params.id);
-    const itemUserId = item.toJSON().user_id;
-    if (!item || itemUserId !== req.context.user_id) {
-      return next(new HttpException(404));
-    }
-    return res.json(item);
-  } catch (err) {
-    if (err.name === "CastError") {
-      return next(new HttpException(400));
-    }
-    return next(new HttpException(404));
-  }
+  const pool = new Pool();
+  const categories = await pool.query(
+    "SELECT * from items WHERE id = $1 AND user_id = $2",
+    [req.params.id, req.context.user_id]
+  );
+  return res.json(categories.rows);
 });
 
 router.post("/", async (req: Request, res: Response) => {
-  const { name, price, url, category } = req.body;
-  const { user_id } = req.context;
-  const item = new Item({
-    name,
-    price,
-    url,
-    category,
-    user_id,
-  });
+  const { name, price, url, category_id } = req.body;
+  const pool = new Pool();
+  const categories = await pool.query(
+    "INSERT INTO items (name, price, url, category_id, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+    [name, price, url, category_id, req.context.user_id]
+  );
 
-  try {
-    const newItem = await item.save();
-    res.status(201).json(newItem);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+  return res.status(201).json(categories.rows[0]);
 });
 
 export default router;
