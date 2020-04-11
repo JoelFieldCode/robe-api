@@ -15,12 +15,29 @@ const generateDatabase = async () => {
     "CREATE TABLE items (ID SERIAL PRIMARY KEY, name VARCHAR(100), url VARCHAR(250), price NUMERIC(2), user_id VARCHAR(150), category_id INTEGER, FOREIGN KEY (category_id) REFERENCES categories (id))"
   );
 
-  await pool.query(
-    "INSERT INTO categories (name) VALUES ('Hats'), ('Tops'), ('Bottoms'), ('Dresses'), ('Shoes')"
-  );
+  const categories = ["Hats", "Tops", "Bottoms", "Dresses", "Shoes"];
+  const categoryValues = categories
+    .map((category) => `('${category}')`)
+    .join(", ");
+
+  await pool.query(`INSERT INTO categories (name) VALUES ${categoryValues}`);
+
+  const items = [
+    {
+      name: "Blue dress",
+      price: 40,
+      url: "https://www.google.com",
+      category_id: 4,
+      user_id: "test",
+    },
+  ];
+  const itemKeyOrder = ["name", "price", "url", "category_id", "user_id"];
+  const itemValues = items.map((item) => {
+    return `(${itemKeyOrder.map((key) => `'${item[key]}'`)})`;
+  });
 
   await pool.query(
-    "INSERT INTO items (name, price, url, category_id, user_id) VALUES ('blue dress', 40, 'https://www.google.com', 4, 'test')"
+    `INSERT INTO items (${itemKeyOrder.join(", ")}) VALUES ${itemValues}`
   );
 
   return process.exit(0);
