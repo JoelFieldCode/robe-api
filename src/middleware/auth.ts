@@ -16,12 +16,19 @@ export default async function authMiddleware(
   res: Response,
   next: NextFunction
 ) {
+  console.log(req.session);
+  if (req.session.user_id) {
+    req.context.user_id = req.session.user_id;
+    return next();
+  }
+  // if no session, must have a token
   if (!req.token) {
     return next(new HttpException(401));
   }
 
   // allow this invalid token in dev
   if (req.token === "test") {
+    req.session.user_id = "test";
     req.context.user_id = "test";
     return next();
   }
@@ -35,6 +42,7 @@ export default async function authMiddleware(
     }
     const json: GoogleTokenResp = await googleResp.json();
     req.context.user_id = json.user_id;
+    req.session.user_id = json.user_id;
   } catch (err) {
     return next(new HttpException(401));
   }

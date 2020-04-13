@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response, NextFunction, json } from "express";
 import bearerToken from "express-bearer-token";
 import cors from "cors";
 import ItemsRouter from "./routes/item";
@@ -7,6 +7,7 @@ import CategoryRouter from "./routes/category";
 import authMiddleware from "./middleware/auth";
 import errorMiddleware from "./middleware/errorMiddleware";
 import HttpException from "./exceptions/HttpException";
+import session from "express-session";
 
 dotenv.config();
 
@@ -23,9 +24,17 @@ declare global {
 }
 
 const app = express();
-app.use(express.json());
+app.use(json());
 app.use(cors());
 app.use(bearerToken());
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: process.env.NODE_ENV === "development" ? false : true },
+  })
+);
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.context = {};
   next();
