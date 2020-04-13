@@ -17,6 +17,10 @@ export default async function authMiddleware(
   next: NextFunction
 ) {
   console.log(req.session);
+  /*
+    TODO use database sessions:
+    https://www.npmjs.com/package/connect-pg-simple
+  */
   if (req.session.user_id) {
     req.context.user_id = req.session.user_id;
     return next();
@@ -33,6 +37,10 @@ export default async function authMiddleware(
     return next();
   }
 
+  /*
+    Current auth check here isn’t secure enough - need to make sure the token is signed for my API 
+    and not just the user's access token for any google service..
+  */
   try {
     const googleResp = await fetch(
       `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${req.token}`

@@ -27,6 +27,7 @@ const app = express();
 app.use(json());
 app.use(cors());
 app.use(bearerToken());
+// todo use a proper secret
 app.use(
   session({
     secret: "keyboard cat",
