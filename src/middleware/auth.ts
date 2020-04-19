@@ -31,7 +31,7 @@ export default async function authMiddleware(
   }
 
   // allow this invalid token in dev
-  if (req.token === "test") {
+  if (req.token === "test" && process.env.NODE_ENV === "development") {
     req.session.user_id = "test";
     req.context.user_id = "test";
     return next();
@@ -48,9 +48,12 @@ export default async function authMiddleware(
     if (googleResp.status !== 200) {
       return next(new HttpException(401));
     }
-    const json: GoogleTokenResp = await googleResp.json();
-    req.context.user_id = json.user_id;
-    req.session.user_id = json.user_id;
+    const googleTokenResp: GoogleTokenResp = await googleResp.json();
+    if (googleTokenResp.issued_to !== process.env.GOOGLE_CLIENT_ID) {
+      return next(new HttpException(401));
+    }
+    req.context.user_id = googleTokenResp.user_id;
+    req.session.user_id = googleTokenResp.user_id;
   } catch (err) {
     return next(new HttpException(401));
   }
