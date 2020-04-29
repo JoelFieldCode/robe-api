@@ -4,7 +4,7 @@ import bearerToken from "express-bearer-token";
 import cors from "cors";
 import ItemsRouter from "./routes/item";
 import CategoryRouter from "./routes/category";
-import authMiddleware from "./middleware/auth";
+import AuthRouter from "./routes/auth";
 import errorMiddleware from "./middleware/errorMiddleware";
 import HttpException from "./exceptions/HttpException";
 import session from "express-session";
@@ -40,13 +40,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   req.context = {};
   next();
 });
-app.use((req: Request, res: Response, next: NextFunction) =>
-  authMiddleware(req, res, next)
-);
+
 const port = process.env.SERVER_PORT; // default port to listen
 
-app.use("/item", ItemsRouter, authMiddleware);
-app.use("/category", CategoryRouter, authMiddleware);
+app.use("/item", ItemsRouter);
+app.use("/category", CategoryRouter);
+app.use("/auth", AuthRouter);
 app.use((err: HttpException, req: Request, res: Response, next: NextFunction) =>
   errorMiddleware(err, req, res, next)
 );

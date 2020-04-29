@@ -1,9 +1,13 @@
 import { Request, Response, Router, NextFunction } from "express";
-import HttpException from "../../exceptions/HttpException";
 
 import { Pool, Client } from "pg";
+import authMiddleware from "../../middleware/auth";
 
 const router = Router();
+
+router.use((req: Request, res: Response, next: NextFunction) =>
+  authMiddleware(req, res, next)
+);
 
 router.get("/", async (req: Request, res: Response) => {
   const pool = new Pool();
