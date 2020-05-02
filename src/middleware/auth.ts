@@ -1,18 +1,32 @@
 import { Request, Response, NextFunction } from "express";
 import HttpException from "../exceptions/HttpException";
+import { JsonWebTokenError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { AccessTokenPayload } from "../services/auth/login";
 
 export default async function authMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  /*
-    TODO use database sessions:
-    https://www.npmjs.com/package/connect-pg-simple
-  */
-  if (req.session.user_id) {
-    req.context.user_id = req.session.user_id;
-    return next();
+  if (!req.token) {
+    return next(new HttpException(401));
   }
-  return next(new HttpException(401));
+  let auth = false;
+  jwt.verify(
+    req.token,
+    process.env.SECRET,
+    (err: JsonWebTokenError, decoded: AccessTokenPayload) => {
+      if (!err) {
+        req.context.user_id = decoded.userId;
+        auth = true;
+      }
+    }
+  );
+
+  if (auth) {
+    return next();
+  } else {
+    return next(new HttpException(401));
+  }
 }

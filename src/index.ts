@@ -7,7 +7,6 @@ import CategoryRouter from "./routes/category";
 import AuthRouter from "./routes/auth";
 import errorMiddleware from "./middleware/errorMiddleware";
 import HttpException from "./exceptions/HttpException";
-import session from "express-session";
 
 dotenv.config();
 
@@ -27,15 +26,6 @@ const app = express();
 app.use(json());
 app.use(cors());
 app.use(bearerToken());
-// todo use a proper secret
-app.use(
-  session({
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === "development" ? false : true },
-  })
-);
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.context = {};
   next();

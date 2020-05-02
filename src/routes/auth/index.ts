@@ -7,8 +7,8 @@ router.post(
   "/login",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await login(req);
-      return res.json("Success").status(200);
+      const token = await login(req);
+      return res.json({ auth: true, token }).status(200);
     } catch (e) {
       next(e);
     }

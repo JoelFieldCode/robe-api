@@ -1,29 +1,36 @@
 import { Request } from "express";
 import fetch from "node-fetch";
 import HttpException from "../../exceptions/HttpException";
+import jwt from "jsonwebtoken";
 
 interface GoogleTokenResp {
-  issued_to: String;
-  audience: String;
-  user_id: String;
-  scope: String;
-  expires_in: Number;
-  access_type: String;
+  issued_to: string;
+  audience: string;
+  user_id: string;
+  scope: string;
+  expires_in: number;
+  access_type: string;
+}
+
+export interface AccessTokenPayload {
+  userId: string;
 }
 
 export async function login(req: Request) {
   try {
-    if (!req.token) {
+    const googleAccesstoken = req.headers["google-access-token"];
+    if (!googleAccesstoken) {
       throw new HttpException(401);
     }
     // allow this invalid token in dev
-    if (req.token === "test" && process.env.NODE_ENV === "development") {
-      req.session.user_id = "test";
-      req.context.user_id = "test";
-      return true;
+    if (
+      googleAccesstoken === "test" &&
+      process.env.NODE_ENV === "development"
+    ) {
+      return createToken("test");
     }
     const googleResp = await fetch(
-      `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${req.token}`
+      `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${googleAccesstoken}`
     );
     if (googleResp.status !== 200) {
       throw new HttpException(401);
@@ -32,10 +39,23 @@ export async function login(req: Request) {
     if (googleTokenResp.issued_to !== process.env.GOOGLE_CLIENT_ID) {
       throw new HttpException(401);
     }
-    req.context.user_id = googleTokenResp.user_id;
-    req.session.user_id = googleTokenResp.user_id;
-    return true;
+    return createToken(googleTokenResp.user_id);
   } catch (err) {
     throw new HttpException(401);
   }
+}
+
+function createToken(userId: string): string {
+  const payload = getAccessTokenPayload(userId);
+  const token = jwt.sign(payload, process.env.SECRET, {
+    // TODO make it expire in 5 mins
+    expiresIn: 86400,
+  });
+  return token;
+}
+
+function getAccessTokenPayload(userId: string): AccessTokenPayload {
+  return {
+    userId,
+  };
 }
