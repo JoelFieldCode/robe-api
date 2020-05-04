@@ -22,4 +22,25 @@ describe("Categories", () => {
       done();
     });
   });
+
+  it("should get a category", (done) => {
+    const server = supertest(app);
+    server.get("/category/2").end((err, res) => {
+      const category = res.body;
+      expect(err).toBeFalsy();
+      expect(res.status).toBe(200);
+      expect(category.id).toBe(2);
+      expect(category.name).toBe("Tops");
+      done();
+    });
+  });
+
+  it("should handle not finding a category", (done) => {
+    const server = supertest(app);
+    server.get("/category/6").end((err, res) => {
+      expect(err).toBeFalsy();
+      expect(res.status).toBe(404);
+      done();
+    });
+  });
 });

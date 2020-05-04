@@ -1,8 +1,9 @@
 import { Request, Response, Router, NextFunction } from "express";
 
-import { Pool, Client } from "pg";
+import { Pool } from "pg";
 import authMiddleware from "../../middleware/auth";
 import sharedPool from "../../database/pool";
+import HttpException from "../../exceptions/HttpException";
 
 const router = Router();
 
@@ -15,13 +16,17 @@ router.get("/", async (req: Request, res: Response) => {
   return res.json(categories.rows);
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   const pool = new Pool();
   const categories = await pool.query(
     "SELECT * from categories WHERE id = $1",
     [req.params.id]
   );
-  return res.json(categories.rows);
+  if (!categories.rowCount) {
+    return next(new HttpException(404, "Category not found"));
+  } else {
+    return res.json(categories.rows[0]);
+  }
 });
 
 /*
