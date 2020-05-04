@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import HttpException from "../exceptions/HttpException";
 import { JsonWebTokenError } from "jsonwebtoken";
-import jwt from "jsonwebtoken";
-import { AccessTokenPayload, ALLOWED_DEV_TOKEN } from "../services/auth/login";
-import isDev from "../utils/isDev";
+import { verify } from "jsonwebtoken";
+import { AccessTokenPayload } from "../services/auth/login";
 
 export default function authMiddleware(
   req: Request,
@@ -14,15 +13,11 @@ export default function authMiddleware(
     return next(new HttpException(401));
   }
 
-  if (req.token === ALLOWED_DEV_TOKEN && isDev()) {
-    req.context.user_id = ALLOWED_DEV_TOKEN;
-    return next();
-  }
-
   let auth = false;
-  jwt.verify(
+  verify(
     req.token,
     process.env.SECRET,
+    null,
     (err: JsonWebTokenError, decoded: AccessTokenPayload) => {
       if (!err) {
         req.context.user_id = decoded.userId;

@@ -1,7 +1,7 @@
 import { Request } from "express";
 import fetch from "node-fetch";
 import HttpException from "../../exceptions/HttpException";
-import jwt from "jsonwebtoken";
+import { sign } from "jsonwebtoken";
 import isDev from "../../utils/isDev";
 
 export const ALLOWED_DEV_TOKEN = "test";
@@ -47,7 +47,7 @@ export async function login(req: Request) {
 
 function createToken(userId: string): string {
   const payload = getAccessTokenPayload(userId);
-  const token = jwt.sign(payload, process.env.SECRET, {
+  const token = sign(payload, process.env.SECRET, {
     // TODO make it expire in 5 mins
     expiresIn: 86400,
   });
