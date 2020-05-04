@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { AccessTokenPayload, ALLOWED_DEV_TOKEN } from "../services/auth/login";
 import isDev from "../utils/isDev";
 
-export default async function authMiddleware(
+export default function authMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
