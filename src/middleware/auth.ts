@@ -9,11 +9,6 @@ export default function authMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  if (!req.token) {
-    return next(new HttpException(401));
-  }
-
-  let auth = false;
   verify(
     req.token,
     process.env.SECRET,
@@ -21,14 +16,10 @@ export default function authMiddleware(
     (err: JsonWebTokenError, decoded: AccessTokenPayload) => {
       if (!err) {
         req.context.user_id = decoded.userId;
-        auth = true;
+        next();
+      } else {
+        next(new HttpException(401));
       }
     }
   );
-
-  if (auth) {
-    return next();
-  } else {
-    return next(new HttpException(401));
-  }
 }
