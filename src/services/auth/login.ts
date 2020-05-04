@@ -2,8 +2,9 @@ import { Request } from "express";
 import fetch from "node-fetch";
 import HttpException from "../../exceptions/HttpException";
 import jwt from "jsonwebtoken";
+import isDev from "../../utils/isDev";
 
-const ALLOWED_DEV_TOKEN = "test";
+export const ALLOWED_DEV_TOKEN = "test";
 
 interface GoogleTokenResp {
   issued_to: string;
@@ -57,10 +58,4 @@ function getAccessTokenPayload(userId: string): AccessTokenPayload {
   return {
     userId,
   };
-}
-
-function isDev(): boolean {
-  return (
-    process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
-  );
 }
