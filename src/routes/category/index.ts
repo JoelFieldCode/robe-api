@@ -2,6 +2,7 @@ import { Request, Response, Router, NextFunction } from "express";
 
 import { Pool, Client } from "pg";
 import authMiddleware from "../../middleware/auth";
+import sharedPool from "../../database/pool";
 
 const router = Router();
 
@@ -10,8 +11,7 @@ router.use((req: Request, res: Response, next: NextFunction) =>
 );
 
 router.get("/", async (req: Request, res: Response) => {
-  const pool = new Pool();
-  const categories = await pool.query("SELECT * from categories");
+  const categories = await sharedPool.query("SELECT * from categories");
   return res.json(categories.rows);
 });
 

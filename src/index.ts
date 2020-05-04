@@ -47,3 +47,5 @@ app.get("/", (req, res) => {
 
 // start the Express server
 app.listen(port, () => {});
+
+export default app;

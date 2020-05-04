@@ -3,6 +3,8 @@ import fetch from "node-fetch";
 import HttpException from "../../exceptions/HttpException";
 import jwt from "jsonwebtoken";
 
+const ALLOWED_DEV_TOKEN = "test";
+
 interface GoogleTokenResp {
   issued_to: string;
   audience: string;
@@ -23,11 +25,8 @@ export async function login(req: Request) {
       throw new HttpException(401);
     }
     // allow this invalid token in dev
-    if (
-      googleAccesstoken === "test" &&
-      process.env.NODE_ENV === "development"
-    ) {
-      return createToken("test");
+    if (googleAccesstoken === ALLOWED_DEV_TOKEN && isDev()) {
+      return createToken(ALLOWED_DEV_TOKEN);
     }
     const googleResp = await fetch(
       `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${googleAccesstoken}`
@@ -58,4 +57,10 @@ function getAccessTokenPayload(userId: string): AccessTokenPayload {
   return {
     userId,
   };
+}
+
+function isDev(): boolean {
+  return (
+    process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
+  );
 }
