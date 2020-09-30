@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import HttpException from "../exceptions/HttpException";
+import { NextFunction, Request, Response } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { verify } from "jsonwebtoken";
+import HttpException from "../exceptions/HttpException";
 import { AccessTokenPayload } from "../services/auth/login";
 
 export default function authMiddleware(

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { login } from "../../services/auth/login";
 
 const router = Router();

@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const generateDatabase = async () => {
-  let pool = new Pool();
+  const pool = new Pool();
   await pool.query("DROP TABLE IF EXISTS items");
   await pool.query("DROP TABLE IF EXISTS categories");
 

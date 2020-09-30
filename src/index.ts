@@ -1,12 +1,12 @@
-import dotenv from "dotenv";
-import express, { Request, Response, NextFunction, json } from "express";
-import bearerToken from "express-bearer-token";
 import cors from "cors";
-import ItemsRouter from "./routes/item";
-import CategoryRouter from "./routes/category";
-import AuthRouter from "./routes/auth";
-import errorMiddleware from "./middleware/errorMiddleware";
+import dotenv from "dotenv";
+import express, { json, NextFunction, Request, Response } from "express";
+import bearerToken from "express-bearer-token";
 import HttpException from "./exceptions/HttpException";
+import errorMiddleware from "./middleware/errorMiddleware";
+import AuthRouter from "./routes/auth";
+import CategoryRouter from "./routes/category";
+import ItemsRouter from "./routes/item";
 
 dotenv.config();
 

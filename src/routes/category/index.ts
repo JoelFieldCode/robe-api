@@ -1,9 +1,9 @@
-import { Request, Response, Router, NextFunction } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 
 import { Pool } from "pg";
-import authMiddleware from "../../middleware/auth";
 import sharedPool from "../../database/pool";
 import HttpException from "../../exceptions/HttpException";
+import authMiddleware from "../../middleware/auth";
 
 const router = Router();
 

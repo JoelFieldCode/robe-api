@@ -1,8 +1,8 @@
-import { Request, Response, Router, NextFunction } from "express";
-import { Pool, Client } from "pg";
-import authMiddleware from "../../middleware/auth";
 import Joi from "@hapi/joi";
+import { NextFunction, Request, Response, Router } from "express";
+import { Client, Pool } from "pg";
 import HttpException from "../../exceptions/HttpException";
+import authMiddleware from "../../middleware/auth";
 const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) =>

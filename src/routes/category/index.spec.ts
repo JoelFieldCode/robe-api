@@ -1,8 +1,8 @@
-import app from "../../";
+import jwt from "jsonwebtoken";
 import supertest from "supertest";
+import app from "../../";
 import sharedPool from "../../database/pool";
 import { verify } from "../../test-utils/jwt.mock";
-import jwt from "jsonwebtoken";
 
 describe("Categories", () => {
   beforeEach(() => {

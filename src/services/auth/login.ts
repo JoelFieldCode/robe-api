@@ -1,7 +1,7 @@
 import { Request } from "express";
+import { sign } from "jsonwebtoken";
 import fetch from "node-fetch";
 import HttpException from "../../exceptions/HttpException";
-import { sign } from "jsonwebtoken";
 import isDev from "../../utils/isDev";
 
 export const ALLOWED_DEV_TOKEN = "test";

@@ -11,7 +11,7 @@ function errorMiddleware(
   const message = error.message || "Something went wrong";
   response.status(status).send({
     status,
-    message
+    message,
   });
 }
 
