@@ -33,16 +33,17 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     name: Joi.string().required(),
     price: Joi.number().required(),
     url: Joi.string().required(),
+    image_url: Joi.string().required(),
   });
   const { error, value } = schema.validate(req.body);
   if (error) {
     return next(new HttpException(400, error as any));
   }
-  const { name, price, url, category_id } = value;
+  const { name, price, url, category_id, image_url } = value;
   const pool = new Pool();
   const categories = await pool.query(
-    "INSERT INTO items (name, price, url, category_id, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-    [name, price, url, category_id, req.context.user_id]
+    "INSERT INTO items (name, price, url, category_id, user_id, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+    [name, price, url, category_id, req.context.user_id, image_url]
   );
 
   return res.status(201).json(categories.rows[0]);
