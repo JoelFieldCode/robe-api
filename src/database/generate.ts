@@ -12,7 +12,7 @@ const generateDatabase = async () => {
     "CREATE TABLE categories (ID SERIAL PRIMARY KEY, name VARCHAR(50), image_url VARCHAR(250))"
   );
   await pool.query(
-    "CREATE TABLE items (ID SERIAL PRIMARY KEY, name VARCHAR(100), url VARCHAR(250), price NUMERIC(17, 0), image_url VARCHAR(250), user_id VARCHAR(150), category_id INTEGER, FOREIGN KEY (category_id) REFERENCES categories (id))"
+    "CREATE TABLE items (ID SERIAL PRIMARY KEY, name VARCHAR(100), url TEXT, price NUMERIC(17, 0), image_url TEXT, user_id VARCHAR(150), category_id INTEGER, FOREIGN KEY (category_id) REFERENCES categories (id))"
   );
 
   const categories = [
