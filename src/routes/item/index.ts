@@ -27,6 +27,18 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   return res.json(categories.rows);
 });
 
+router.delete(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const pool = new Pool();
+    await pool.query("DELETE from items WHERE id = $1 AND user_id = $2", [
+      req.params.id,
+      req.context.user_id,
+    ]);
+    return res.status(200).json("Success");
+  }
+);
+
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
     category_id: Joi.number().required(),
