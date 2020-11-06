@@ -9,18 +9,46 @@ const generateDatabase = async () => {
   await pool.query("DROP TABLE IF EXISTS categories");
 
   await pool.query(
-    "CREATE TABLE categories (ID SERIAL PRIMARY KEY, name VARCHAR(50))"
+    "CREATE TABLE categories (ID SERIAL PRIMARY KEY, name VARCHAR(50), image_url VARCHAR(250))"
   );
   await pool.query(
     "CREATE TABLE items (ID SERIAL PRIMARY KEY, name VARCHAR(100), url VARCHAR(250), price NUMERIC(17, 0), image_url VARCHAR(250), user_id VARCHAR(150), category_id INTEGER, FOREIGN KEY (category_id) REFERENCES categories (id))"
   );
 
-  const categories = ["Hats", "Tops", "Bottoms", "Dresses", "Shoes"];
+  const categories = [
+    {
+      name: "Hats",
+      image_url:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRdL_C5O5y08a7H7P6zsE0sUW5qqY-dvZVE7wQoGDbM4S_dCBx5_-4VOVjWXAquXbBMXz1NEY3G&usqp=CAc",
+    },
+    {
+      name: "Tops",
+      image_url:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQTFuXV0HNGQyKIAYNBay6da4PheiNvMJJoENCWLnaI80ciPG9ShmiBWrWWHr4&usqp=CAc",
+    },
+    {
+      name: "Bottoms",
+      image_url:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQDhIJdYDG6ZKbxuL3lqOwhiPvSPj3PM-NLxJE7_Aj_RBsNI4cmU-fEyhl_l8ky6qhC5HA6qyFx&usqp=CAc",
+    },
+    {
+      name: "Dresses",
+      image_url:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQqkFhEbkN7RKHPyKU0L7NpXUEvRQxjQXWVRfKbrFz6BnBfEsWpsc9zC92VmFU3GEN4RN4TBvU&usqp=CAc",
+    },
+    {
+      name: "Shoes",
+      image_url:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR3dlzvkmXh-72eGBGezWxU2OWWLGrMUSVnKYeKAgkFKQANKvneiBeb8BgPTPDe5iboFDKFpoiBRQ&usqp=CAc",
+    },
+  ];
   const categoryValues = categories
-    .map((category) => `('${category}')`)
+    .map((category) => `('${category.name}', '${category.image_url}')`)
     .join(", ");
 
-  await pool.query(`INSERT INTO categories (name) VALUES ${categoryValues}`);
+  await pool.query(
+    `INSERT INTO categories (name, image_url) VALUES ${categoryValues}`
+  );
 
   const items = [
     {
