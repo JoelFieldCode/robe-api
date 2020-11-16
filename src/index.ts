@@ -31,7 +31,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-const port = process.env.SERVER_PORT; // default port to listen
+const PORT = process.env.PORT || 8080;
 
 app.use("/item", ItemsRouter);
 app.use("/category", CategoryRouter);
