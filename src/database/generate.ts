@@ -1,10 +1,9 @@
 import dotenv from "dotenv";
-import { Pool } from "pg";
+import pool from "../database/pool";
 
 dotenv.config();
 
 const generateDatabase = async () => {
-  const pool = new Pool();
   await pool.query("DROP TABLE IF EXISTS items");
   await pool.query("DROP TABLE IF EXISTS categories");
 

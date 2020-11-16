@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 
-import { Pool } from "pg";
-import sharedPool from "../../database/pool";
+import pool from "../../database/pool";
 import HttpException from "../../exceptions/HttpException";
 import authMiddleware from "../../middleware/auth";
 
@@ -12,12 +11,11 @@ router.use((req: Request, res: Response, next: NextFunction) =>
 );
 
 router.get("/", async (req: Request, res: Response) => {
-  const categories = await sharedPool.query("SELECT * from categories");
+  const categories = await pool.query("SELECT * from categories");
   return res.json(categories.rows);
 });
 
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
-  const pool = new Pool();
   const categories = await pool.query(
     "SELECT * from categories WHERE id = $1",
     [req.params.id]
@@ -38,7 +36,6 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
 router.get(
   "/:id/items",
   async (req: Request, res: Response, next: NextFunction) => {
-    const pool = new Pool();
     const categories = await pool.query(
       "SELECT * FROM items WHERE category_id = $1 AND user_id = $2",
       [req.params.id, req.context.user_id]
