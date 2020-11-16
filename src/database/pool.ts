@@ -17,7 +17,7 @@ if (isDev()) {
 } else {
   connectionString = {
     connectionString: process.env.DATABASE_URL,
-    ssl: true,
+    // ssl: true,
   };
 }
 
