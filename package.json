@@ -9,7 +9,7 @@
     "prestart": "npm run build",
     "start": "node .",
     "start:watch": "nodemon src/index.ts",
-    "seed": "node src/database/generate.ts",
+    "seed": "node dist/database/generate.js",
     "test": "jest"
   },
   "keywords": [],
