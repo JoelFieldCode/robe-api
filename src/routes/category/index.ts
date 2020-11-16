@@ -30,7 +30,9 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
 });
 
 /*
-  SELECT items.price, items.name, items.url, categories.name as category_name FROM items JOIN categories ON items.category_id = categories.id AND categories.id = 1;
+  SELECT items.price, items.name, items.url, categories.name as
+  category_name FROM items JOIN categories ON items.category_id =
+  categories.id AND categories.id = 1;
 */
 
 router.get(

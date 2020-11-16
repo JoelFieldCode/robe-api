@@ -11,7 +11,7 @@ import ItemsRouter from "./routes/item";
 dotenv.config();
 
 interface Context {
-  user_id?: String;
+  user_id?: string;
 }
 
 declare global {
@@ -46,6 +46,6 @@ app.get("/", (req, res) => {
 });
 
 // start the Express server
-app.listen(port, () => {});
+app.listen(port);
 
 export default app;

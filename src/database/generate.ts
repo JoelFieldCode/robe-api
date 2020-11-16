@@ -1,5 +1,5 @@
-const Pool = require("pg").Pool;
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
+import { Pool } from "pg";
 
 dotenv.config();
 
@@ -70,6 +70,7 @@ const generateDatabase = async () => {
     "user_id",
   ];
   const itemValues = items.map((item) => {
+    // @ts-ignore
     return `(${itemKeyOrder.map((key) => `'${item[key]}'`)})`;
   });
 
