@@ -11,7 +11,16 @@ router.use((req: Request, res: Response, next: NextFunction) =>
 );
 
 router.get("/", async (req: Request, res: Response) => {
-  const categories = await pool.query("SELECT * from categories");
+  const categories = await pool.query(
+    `SELECT DISTINCT ON (categories.id) categories.id, categories.name, categories.image_url, items.image_url AS item_image_url, items.id as item_id
+    FROM categories 
+    LEFT JOIN items 
+    ON categories.id = items.category_id 
+    AND items.user_id = $1
+    ORDER BY categories.id, items.id DESC NULLS LAST
+    `,
+    [req.context.user_id]
+  );
   return res.json(categories.rows);
 });
 
