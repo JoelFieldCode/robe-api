@@ -1,5 +1,6 @@
 import Joi from "@hapi/joi";
 import { NextFunction, Request, Response, Router } from "express";
+import { getUserCategories } from "../../services/category";
 import pool from "../../database/pool";
 import HttpException from "../../exceptions/HttpException";
 import authMiddleware from "../../middleware/auth";
@@ -49,12 +50,20 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     return next(new HttpException(400, error as any));
   }
   const { name, price, url, category_id, image_url } = value;
-  const categories = await pool.query(
-    "INSERT INTO items (name, price, url, category_id, user_id, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-    [name, price, url, category_id, req.context.user_id, image_url]
-  );
+  const userCategories = await getUserCategories(req.context.user_id);
+  if (!userCategories.find((category) => category.id === category_id)) {
+    return next(new HttpException(403, "Unauthorized"));
+  }
+  try {
+    const categories = await pool.query(
+      "INSERT INTO items (name, price, url, category_id, user_id, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [name, price, url, category_id, req.context.user_id, image_url]
+    );
 
-  return res.status(201).json(categories.rows[0]);
+    return res.status(201).json(categories.rows[0]);
+  } catch (err) {
+    return next(new HttpException(422, "Error creating item"));
+  }
 });
 
 export default router;

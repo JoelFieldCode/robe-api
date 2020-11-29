@@ -1,4 +1,6 @@
+import Joi from "@hapi/joi";
 import { NextFunction, Request, Response, Router } from "express";
+import { getUserCategories } from "../../services/category";
 
 import pool from "../../database/pool";
 import HttpException from "../../exceptions/HttpException";
@@ -11,23 +13,36 @@ router.use((req: Request, res: Response, next: NextFunction) =>
 );
 
 router.get("/", async (req: Request, res: Response) => {
-  const categories = await pool.query(
-    `SELECT DISTINCT ON (categories.id) categories.id, categories.name, categories.image_url, items.image_url AS item_image_url, items.id as item_id
-    FROM categories 
-    LEFT JOIN items 
-    ON categories.id = items.category_id 
-    AND items.user_id = $1
-    ORDER BY categories.id, items.id DESC NULLS LAST
-    `,
-    [req.context.user_id]
-  );
-  return res.json(categories.rows);
+  const categories = await getUserCategories(req.context.user_id);
+  return res.json(categories);
+});
+
+router.post("/", async (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    image_url: Joi.string().required(),
+  });
+  const { error, value } = schema.validate(req.body);
+  if (error) {
+    return next(new HttpException(400, error as any));
+  }
+
+  const { name, image_url } = value;
+  try {
+    const categories = await pool.query(
+      "INSERT INTO categories (name, user_id, image_url) VALUES ($1, $2, $3) RETURNING *",
+      [name, req.context.user_id, image_url]
+    );
+    return res.status(201).json(categories.rows[0]);
+  } catch (err) {
+    return next(new HttpException(422, "Error creating category"));
+  }
 });
 
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   const categories = await pool.query(
-    "SELECT * from categories WHERE id = $1",
-    [req.params.id]
+    "SELECT * from categories WHERE id = $1 AND user_id = $2",
+    [req.params.id, req.context.user_id]
   );
   if (!categories.rowCount) {
     return next(new HttpException(404, "Category not found"));
@@ -35,12 +50,6 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     return res.json(categories.rows[0]);
   }
 });
-
-/*
-  SELECT items.price, items.name, items.url, categories.name as
-  category_name FROM items JOIN categories ON items.category_id =
-  categories.id AND categories.id = 1;
-*/
 
 router.get(
   "/:id/items",

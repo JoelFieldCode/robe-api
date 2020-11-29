@@ -1,6 +1,6 @@
+import dotenv from "dotenv";
 import { ClientConfig, Pool } from "pg";
 import isDev from "../utils/isDev";
-import dotenv from "dotenv";
 
 dotenv.config();
 
