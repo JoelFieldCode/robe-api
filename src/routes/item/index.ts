@@ -47,7 +47,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   });
   const { error, value } = schema.validate(req.body);
   if (error) {
-    return next(new HttpException(400, error as any));
+    return next(new HttpException(422, error as any));
   }
   const { name, price, url, category_id, image_url } = value;
   const userCategories = await getUserCategories(req.context.user_id);

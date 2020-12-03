@@ -10,7 +10,8 @@
     "start": "node .",
     "start:watch": "nodemon src/index.ts",
     "seed": "node dist/database/generate.js",
-    "test": "jest"
+    "test": "jest --runInBand",
+    "test:watch": "jest --runInBand --watch"
   },
   "keywords": [],
   "author": "",
@@ -37,8 +38,10 @@
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
+    "@types/nock": "^11.1.0",
     "jest": "^25.5.4",
     "nodemon": "^2.0.2",
+    "nock": "^13.0.5",
     "supertest": "^4.0.2",
     "ts-node": "^8.5.4",
     "tslint": "^5.20.1",

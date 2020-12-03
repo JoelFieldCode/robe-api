@@ -23,7 +23,7 @@ export async function login(req: Request) {
   try {
     const googleAccesstoken = req.headers["google-access-token"];
     if (!googleAccesstoken) {
-      throw new HttpException(401);
+      throw new HttpException(401, "Unauthenticated");
     }
     // allow this invalid token in dev
     if (googleAccesstoken === ALLOWED_DEV_TOKEN && isDev()) {
@@ -33,15 +33,15 @@ export async function login(req: Request) {
       `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${googleAccesstoken}`
     );
     if (googleResp.status !== 200) {
-      throw new HttpException(401);
+      throw new HttpException(401, "Unauthenticated");
     }
     const googleTokenResp: GoogleTokenResp = await googleResp.json();
     if (googleTokenResp.issued_to !== process.env.GOOGLE_CLIENT_ID) {
-      throw new HttpException(401);
+      throw new HttpException(401, "Unauthenticated");
     }
     return createToken(googleTokenResp.user_id);
   } catch (err) {
-    throw new HttpException(401);
+    throw new HttpException(401, "Unauthenticated");
   }
 }
 
