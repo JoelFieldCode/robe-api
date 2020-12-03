@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import Category from "../../models/Category";
 import Item from "../../models/Item";
 import supertest from "supertest";
-import app, { server } from "../../";
+import app, { server } from "../..";
 import sharedPool from "../../database/pool";
 import { mockVerifyWithUserId } from "../../test-utils/jwt.mock";
 import { ALLOWED_DEV_TOKEN } from "../../services/auth/login";
