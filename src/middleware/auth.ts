@@ -18,7 +18,7 @@ export default function authMiddleware(
         req.context.user_id = decoded.userId;
         next();
       } else {
-        next(new HttpException(401));
+        next(new HttpException(401, "Unauthenticated"));
       }
     }
   );

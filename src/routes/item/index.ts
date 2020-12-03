@@ -1,9 +1,9 @@
 import Joi from "@hapi/joi";
 import { NextFunction, Request, Response, Router } from "express";
-import { getUserCategories } from "../../services/category";
 import pool from "../../database/pool";
 import HttpException from "../../exceptions/HttpException";
 import authMiddleware from "../../middleware/auth";
+import { getUserCategories } from "../../services/category";
 const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) =>

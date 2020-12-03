@@ -46,6 +46,7 @@ app.get("/", (req, res) => {
 });
 
 // start the Express server
-app.listen(PORT);
+const server = app.listen(PORT);
 
+export { server };
 export default app;

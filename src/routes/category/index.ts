@@ -24,7 +24,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   });
   const { error, value } = schema.validate(req.body);
   if (error) {
-    return next(new HttpException(400, error as any));
+    return next(new HttpException(422, error as any));
   }
 
   const { name, image_url } = value;
@@ -50,6 +50,25 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     return res.json(categories.rows[0]);
   }
 });
+
+router.delete(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const rows = await pool.query(
+        "DELETE from categories WHERE id = $1 AND user_id = $2",
+        [req.params.id, req.context.user_id]
+      );
+      if (rows.rowCount) {
+        return res.status(200).json("Success");
+      } else {
+        return next(new HttpException(403, "Unauthorized"));
+      }
+    } catch (err) {
+      return next(new HttpException(404, "Error deleting category"));
+    }
+  }
+);
 
 router.get(
   "/:id/items",
