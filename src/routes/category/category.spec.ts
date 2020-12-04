@@ -133,4 +133,15 @@ describe("Categories", () => {
         done();
       });
   });
+
+  it("should not find the category as it is deleted", (done) => {
+    supertest(app)
+      .get(`/category/${category_id}`)
+      .end((err, res) => {
+        expect(err).toBeFalsy();
+        expect(res.status).toBe(404);
+        server.close();
+        done();
+      });
+  });
 });

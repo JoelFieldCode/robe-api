@@ -23,17 +23,25 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     "SELECT * from items WHERE id = $1 AND user_id = $2",
     [req.params.id, req.context.user_id]
   );
-  return res.json(categories.rows);
+  if (categories.rowCount) {
+    return res.json(categories.rows[0]);
+  } else {
+    return next(new HttpException(404, "Category not found"));
+  }
 });
 
 router.delete(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    await pool.query("DELETE from items WHERE id = $1 AND user_id = $2", [
-      req.params.id,
-      req.context.user_id,
-    ]);
-    return res.status(200).json("Success");
+    const rows = await pool.query(
+      "DELETE from items WHERE id = $1 AND user_id = $2",
+      [req.params.id, req.context.user_id]
+    );
+    if (rows.rowCount) {
+      return res.status(200).json("Success");
+    } else {
+      return next(new HttpException(403, "Unauthorised"));
+    }
   }
 );
 
