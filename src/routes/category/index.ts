@@ -5,6 +5,7 @@ import { getUserCategories } from "../../services/category";
 import pool from "../../database/pool";
 import HttpException from "../../exceptions/HttpException";
 import authMiddleware from "../../middleware/auth";
+import Item from "../../models/Item";
 
 const router = Router();
 
@@ -73,11 +74,11 @@ router.delete(
 router.get(
   "/:id/items",
   async (req: Request, res: Response, next: NextFunction) => {
-    const categories = await pool.query(
+    const items = await pool.query<Item>(
       "SELECT * FROM items WHERE category_id = $1 AND user_id = $2",
       [req.params.id, req.context.user_id]
     );
-    return res.json(categories.rows);
+    return res.json(items.rows);
   }
 );
 
