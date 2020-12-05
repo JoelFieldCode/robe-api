@@ -8,6 +8,22 @@ import { mockVerifyWithUserId } from "../../test-utils/jwt.mock";
 import { ALLOWED_DEV_TOKEN } from "../../services/auth/login";
 
 describe("Categories", () => {
+  let category_id = 0;
+  let item_id = 0;
+  let category_without_items_id = 0;
+  beforeAll((done) => {
+    jest
+      .spyOn(jwt, "verify")
+      .mockImplementation(mockVerifyWithUserId(ALLOWED_DEV_TOKEN));
+    supertest(app)
+      .post("/category")
+      .send({ name: "no items", image_url: "https://www.google.com" })
+      .end((err, res) => {
+        category_without_items_id = res.body.id;
+        server.close();
+        done();
+      });
+  });
   beforeEach(() => {
     jest
       .spyOn(jwt, "verify")
@@ -16,8 +32,6 @@ describe("Categories", () => {
   afterAll(() => {
     sharedPool.end();
   });
-  let category_id = 0;
-  let item_id = 0;
 
   it("should fail creating a category", (done) => {
     supertest(app)
@@ -34,13 +48,46 @@ describe("Categories", () => {
   it("should create a category", (done) => {
     supertest(app)
       .post("/category")
-      .send({ name: "Dresses", image_url: "https://www.google.com" })
+      .send({ name: "has items", image_url: "https://www.google.com" })
       .end((err, res) => {
         const category = res.body;
         expect(err).toBeFalsy();
         expect(res.status).toBe(201);
-        expect(category.name).toBe("Dresses");
+        expect(category.name).toBe("has items");
         category_id = category.id;
+        server.close();
+        done();
+      });
+  });
+
+  it("should restrict direct access to a category", (done) => {
+    jest
+      .spyOn(jwt, "verify")
+      .mockReset()
+      .mockImplementationOnce(mockVerifyWithUserId("test2"));
+    supertest(app)
+      .get(`/category/${category_id}`)
+      .end((err, res) => {
+        expect(err).toBeFalsy();
+        expect(res.status).toBe(404);
+        server.close();
+        done();
+      });
+  });
+
+  it("should not return other user's categories", (done) => {
+    jest
+      .spyOn(jwt, "verify")
+      .mockReset()
+      .mockImplementationOnce(mockVerifyWithUserId("test2"));
+    supertest(app)
+      .get(`/category`)
+      .end((err, res) => {
+        const categories: Category[] = res.body;
+        const foundCategory = categories.find((c) => c.id === category_id);
+        expect(foundCategory).not.toBeTruthy();
+        expect(err).toBeFalsy();
+        expect(res.status).toBe(200);
         server.close();
         done();
       });
@@ -50,17 +97,17 @@ describe("Categories", () => {
     supertest(app)
       .get(`/category/${category_id}`)
       .end((err, res) => {
-        const category = res.body;
+        const category: Category = res.body;
         expect(err).toBeFalsy();
         expect(res.status).toBe(200);
         expect(category.id).toBe(category_id);
-        expect(category.name).toBe("Dresses");
+        expect(category.name).toBe("has items");
         server.close();
         done();
       });
   });
 
-  it("should get categories", (done) => {
+  it("should return the users categories", (done) => {
     supertest(app)
       .get(`/category`)
       .end((err, res) => {
@@ -103,6 +150,27 @@ describe("Categories", () => {
         const items: Item[] = res.body;
         expect(items[0].name).toBe("test");
         expect(items[0].id).toBe(item_id);
+        server.close();
+        done();
+      });
+  });
+
+  it("should retreive categories with and without child items", (done) => {
+    supertest(app)
+      .get(`/category`)
+      .end((err, res) => {
+        expect(err).toBeFalsy();
+        const categories: Category[] = res.body;
+        const foundCategoryWithItems = categories.find(
+          (c) => c.id === category_id
+        );
+        expect(foundCategoryWithItems).toBeTruthy();
+        expect(foundCategoryWithItems.item_count).toBe("1");
+        const foundCategoryWithoutItems = categories.find(
+          (c) => c.id === category_without_items_id
+        );
+        expect(foundCategoryWithoutItems).toBeTruthy();
+        expect(foundCategoryWithoutItems.item_count).toBe("0");
         server.close();
         done();
       });

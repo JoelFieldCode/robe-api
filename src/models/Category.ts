@@ -3,4 +3,5 @@ export default interface Category {
   name: string;
   image_url: string;
   user_id: string;
+  item_count: number;
 }

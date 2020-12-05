@@ -40,14 +40,14 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
-  const categories = await pool.query(
-    "SELECT * from categories WHERE id = $1 AND user_id = $2",
-    [req.params.id, req.context.user_id]
+  const userCategories = await getUserCategories(req.context.user_id);
+  const foundCategory = userCategories.find(
+    (category) => category.id === parseInt(req.params.id)
   );
-  if (!categories.rowCount) {
+  if (!foundCategory) {
     return next(new HttpException(404, "Category not found"));
   } else {
-    return res.json(categories.rows[0]);
+    return res.json(foundCategory);
   }
 });
 

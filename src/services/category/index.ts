@@ -5,7 +5,7 @@ export const getUserCategories = async (
   userId: string
 ): Promise<Category[]> => {
   const categories = await pool.query(
-    `SELECT * from categories WHERE user_id = $1
+    `SELECT c.id, c.image_url, c.name, COUNT(DISTINCT i) AS item_count FROM categories c FULL JOIN items i ON i.category_id = c.id WHERE c.user_id = $1 GROUP BY c.id ORDER BY item_count DESC
     `,
     [userId]
   );
