@@ -69,22 +69,7 @@ describe("Categories", () => {
       .get(`/category/${category_id}`)
       .end((err, res) => {
         expect(err).toBeFalsy();
-        expect(res.status).toBe(403);
-        server.close();
-        done();
-      });
-  });
-
-  it("should restrict direct access to a categorys items", (done) => {
-    jest
-      .spyOn(jwt, "verify")
-      .mockReset()
-      .mockImplementationOnce(mockVerifyWithUserId("test2"));
-    supertest(app)
-      .get(`/category/${category_id}/items`)
-      .end((err, res) => {
-        expect(err).toBeFalsy();
-        expect(res.status).toBe(403);
+        expect(res.status).toBe(404);
         server.close();
         done();
       });
@@ -180,12 +165,12 @@ describe("Categories", () => {
           (c) => c.id === category_id
         );
         expect(foundCategoryWithItems).toBeTruthy();
-        expect(foundCategoryWithItems.item_count).toBe(1);
+        expect(foundCategoryWithItems.item_count).toBe("1");
         const foundCategoryWithoutItems = categories.find(
           (c) => c.id === category_without_items_id
         );
         expect(foundCategoryWithoutItems).toBeTruthy();
-        expect(foundCategoryWithoutItems.item_count).toBe(0);
+        expect(foundCategoryWithoutItems.item_count).toBe("0");
         server.close();
         done();
       });
@@ -222,7 +207,7 @@ describe("Categories", () => {
       .get(`/category/${category_id}`)
       .end((err, res) => {
         expect(err).toBeFalsy();
-        expect(res.status).toBe(403);
+        expect(res.status).toBe(404);
         server.close();
         done();
       });
