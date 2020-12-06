@@ -46,7 +46,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
     (category) => category.id === parseInt(req.params.id)
   );
   if (!foundCategory) {
-    return next(new HttpException(404, "Category not found"));
+    return next(new HttpException(403, "Unauthorized"));
   } else {
     return res.json(foundCategory);
   }
@@ -78,7 +78,11 @@ router.get(
       "SELECT * FROM items WHERE category_id = $1 AND user_id = $2",
       [req.params.id, req.context.user_id]
     );
-    return res.json(items.rows);
+    if (items.rowCount) {
+      return res.json(items.rows);
+    } else {
+      return next(new HttpException(403, "Unauthorized"));
+    }
   }
 );
 
