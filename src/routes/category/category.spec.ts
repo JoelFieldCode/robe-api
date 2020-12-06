@@ -165,12 +165,12 @@ describe("Categories", () => {
           (c) => c.id === category_id
         );
         expect(foundCategoryWithItems).toBeTruthy();
-        expect(foundCategoryWithItems.item_count).toBe("1");
+        expect(foundCategoryWithItems.item_count).toBe(1);
         const foundCategoryWithoutItems = categories.find(
           (c) => c.id === category_without_items_id
         );
         expect(foundCategoryWithoutItems).toBeTruthy();
-        expect(foundCategoryWithoutItems.item_count).toBe("0");
+        expect(foundCategoryWithoutItems.item_count).toBe(0);
         server.close();
         done();
       });
