@@ -75,7 +75,7 @@ router.get(
   "/:id/items",
   async (req: Request, res: Response, next: NextFunction) => {
     const items = await pool.query<Item>(
-      "SELECT * FROM items WHERE category_id = $1 AND user_id = $2",
+      "SELECT * FROM items WHERE category_id = $1 AND user_id = $2 ORDER BY id DESC",
       [req.params.id, req.context.user_id]
     );
     return res.json(items.rows);

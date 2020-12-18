@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
-import Category from "../../models/Category";
-import Item from "../../models/Item";
 import supertest from "supertest";
 import app, { server } from "../..";
 import sharedPool from "../../database/pool";
-import { mockVerifyWithUserId } from "../../test-utils/jwt.mock";
+import Category from "../../models/Category";
+import Item from "../../models/Item";
 import { ALLOWED_DEV_TOKEN } from "../../services/auth/login";
+import { mockVerifyWithUserId } from "../../test-utils/jwt.mock";
 
 describe("Categories", () => {
   let category_id = 0;
@@ -126,7 +126,7 @@ describe("Categories", () => {
     supertest(app)
       .post(`/item`)
       .send({
-        category_id: category_id,
+        category_id,
         name: "test",
         price: 40,
         url: "https://www.google.com",

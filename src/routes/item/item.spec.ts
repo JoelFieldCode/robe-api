@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-import { ALLOWED_DEV_TOKEN } from "../../services/auth/login";
-import { mockVerifyWithUserId } from "../../test-utils/jwt.mock";
-import sharedPool from "../../database/pool";
 import supertest from "supertest";
 import app, { server } from "../..";
+import sharedPool from "../../database/pool";
+import { ALLOWED_DEV_TOKEN } from "../../services/auth/login";
+import { mockVerifyWithUserId } from "../../test-utils/jwt.mock";
 
 describe("Items", () => {
   let category_id: number = 0;

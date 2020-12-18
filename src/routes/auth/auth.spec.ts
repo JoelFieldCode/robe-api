@@ -1,7 +1,7 @@
-import { ALLOWED_DEV_TOKEN } from "../../services/auth/login";
+import nock from "nock";
 import supertest from "supertest";
 import app, { server } from "../../";
-import nock from "nock";
+import { ALLOWED_DEV_TOKEN } from "../../services/auth/login";
 
 describe("Auth", () => {
   const google_access_token = "proper-token";
