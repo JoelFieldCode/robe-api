@@ -36,9 +36,12 @@ export async function login(req: Request) {
       throw new HttpException(401, "Unauthenticated");
     }
     const googleTokenResp: GoogleTokenResp = await googleResp.json();
-    if (googleTokenResp.issued_to !== process.env.GOOGLE_CLIENT_ID) {
-      throw new HttpException(401, "Unauthenticated");
-    }
+    /*
+      This might be overkill, as long as it's a google token we can trust it
+    */
+    // if (googleTokenResp.issued_to !== process.env.GOOGLE_CLIENT_ID) {
+    //   throw new HttpException(401, "Unauthenticated");
+    // }
     return createToken(googleTokenResp.user_id);
   } catch (err) {
     throw new HttpException(401, "Unauthenticated");

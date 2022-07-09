@@ -9,6 +9,7 @@ import CategoryRouter from "./routes/category";
 import ItemsRouter from "./routes/item";
 import { graphqlHTTP } from 'express-graphql'
 import { schema, resolver } from './schema'
+import expressPlayground from 'graphql-playground-middleware-express'
 
 dotenv.config();
 
@@ -45,13 +46,14 @@ app.use((err: HttpException, req: Request, res: Response, next: NextFunction) =>
 app.use('/graphql', graphqlHTTP({
   schema: schema,
   rootValue: resolver,
-  graphiql: true,
 }));
 
 // define a route handler for the default home page
 app.get("/", (req, res) => {
   res.send("Hello ");
 });
+
+app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 
 // start the Express server
 const server = app.listen(PORT);
