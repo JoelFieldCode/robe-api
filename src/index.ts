@@ -10,6 +10,8 @@ import ItemsRouter from "./routes/item";
 import { graphqlHTTP } from 'express-graphql'
 import { schema, resolver } from './schema'
 import expressPlayground from 'graphql-playground-middleware-express'
+import authMiddleware from "./middleware/auth";
+import isDev from "./utils/isDev";
 
 dotenv.config();
 
@@ -33,16 +35,15 @@ app.use((req, _res, next) => {
   req.context = {};
   next();
 });
+// todo fix errorHandler..
+// app.use((err, req, res, err) => errorMiddleware(err, req, res))
 
 const PORT = process.env.PORT || 8080;
 
 app.use("/item", ItemsRouter);
 app.use("/category", CategoryRouter);
 app.use("/auth", AuthRouter);
-// todo fix type
-app.use((err: HttpException, req: Request, res: Response, next: NextFunction) =>
-  errorMiddleware(err, req, res, next)
-);
+app.use(authMiddleware)
 app.use('/graphql', graphqlHTTP({
   schema: schema,
   rootValue: resolver,
@@ -52,8 +53,9 @@ app.use('/graphql', graphqlHTTP({
 app.get("/", (req, res) => {
   res.send("Hello ");
 });
-
-app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
+if (isDev()) {
+  app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
+}
 
 // start the Express server
 const server = app.listen(PORT);
