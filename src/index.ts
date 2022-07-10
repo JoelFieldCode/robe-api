@@ -35,6 +35,7 @@ app.use((req, _res, next) => {
   req.context = {};
   next();
 });
+app.use(authMiddleware)
 // todo fix errorHandler..
 // app.use((err, req, res, err) => errorMiddleware(err, req, res))
 
@@ -43,7 +44,7 @@ const PORT = process.env.PORT || 8080;
 app.use("/item", ItemsRouter);
 app.use("/category", CategoryRouter);
 app.use("/auth", AuthRouter);
-app.use(authMiddleware)
+
 app.use('/graphql', graphqlHTTP({
   schema: schema,
   rootValue: resolver,
