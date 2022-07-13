@@ -8,6 +8,7 @@ export const schema = buildSchema(`
     image_url: String!
   }
   type Query {
-    categories: [Category]
+    getCategories: [Category!]
+    getCategory(categoryId: Int!): Category
   }
-`);
+`)

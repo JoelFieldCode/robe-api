@@ -3,13 +3,22 @@ import { Request } from 'express'
 
 const prisma = new PrismaClient()
 
-// The root provides a resolver function for each API endpoint
+type GetCategoryQuery = { categoryId: number }
+
 export const resolver = {
-  categories: async (args: any, req: Request) => {
+  getCategories: async (args: {}, req: Request) => {
     return await prisma.category.findMany({
       where: {
         user_id: req.context.user_id,
       }
     })
   },
+  getCategory: async ({ categoryId }: GetCategoryQuery, req: Request) => {
+    return await prisma.category.findFirst({
+      where: {
+        id: categoryId,
+        user_id: req.context.user_id,
+      }
+    })
+  }
 };
