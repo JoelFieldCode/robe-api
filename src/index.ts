@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import express, { json, NextFunction, Request, Response, Express } from "express";
 import bearerToken from "express-bearer-token";
 import HttpException from "./exceptions/HttpException";
-import errorMiddleware from "./middleware/errorMiddleware";
+import { errorHandler } from "./middleware/errorHandler";
 import AuthRouter from "./routes/auth";
 import CategoryRouter from "./routes/category";
 import ItemsRouter from "./routes/item";
@@ -36,8 +36,6 @@ app.use((req, _res, next) => {
   next();
 });
 app.use(authMiddleware)
-// todo fix errorHandler..
-// app.use((err, req, res, err) => errorMiddleware(err, req, res))
 
 const PORT = process.env.PORT || 8080;
 
@@ -57,6 +55,8 @@ app.get("/", (req, res) => {
 if (isDev()) {
   app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 }
+
+app.use(errorHandler)
 
 // start the Express server
 const server = app.listen(PORT);
