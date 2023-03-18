@@ -16,7 +16,7 @@ import isDev from "./utils/isDev";
 dotenv.config();
 
 interface Context {
-  user_id?: string;
+  user_id: string;
 }
 
 declare global {
@@ -32,7 +32,7 @@ app.use(json());
 app.use(cors());
 app.use(bearerToken());
 app.use((req, _res, next) => {
-  req.context = {};
+  req.context = { user_id: 'null' };
   next();
 });
 app.use(authMiddleware)

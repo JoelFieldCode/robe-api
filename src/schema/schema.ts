@@ -6,6 +6,13 @@ export const schema = buildSchema(`
         name: String!
         image_url: String!
     }
+    input CreateItemInput {
+        name: String!
+        image_url: String!
+        url: String!
+        price: Float!
+        category_id: Int!
+    }
   type Category {
     name: String!
     id: Int!
@@ -25,5 +32,6 @@ export const schema = buildSchema(`
   }
   type Mutation {
     createCategory(input: CreateCategoryInput): Category
+    createItem(input: CreateItemInput): Item
   }
 `)
