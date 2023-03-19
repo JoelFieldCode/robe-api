@@ -13,7 +13,8 @@
     "test": "jest --runInBand",
     "test:watch": "jest --runInBand --watch",
     "migrate": "npx prisma migrate dev && npx prisma generate",
-    "db:push": "npx prisma db push"
+    "db:push": "npx prisma db push",
+    "codegen": "graphql-codegen"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -41,11 +42,11 @@
     "dotenv": "^8.2.0",
     "express": "4.18.1",
     "express-bearer-token": "^2.4.0",
-    "express-graphql": "^0.12.0",
     "graphql": "^16.5.0",
     "graphql-import-node": "^0.0.5",
     "graphql-playground-middleware-express": "^1.7.23",
     "graphql-tools": "^8.3.0",
+    "graphql-yoga": "^3.7.3",
     "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.0",
     "pg": "^8.0.2",

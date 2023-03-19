@@ -7,19 +7,15 @@ import { errorHandler } from "./middleware/errorHandler";
 import AuthRouter from "./routes/auth";
 import CategoryRouter from "./routes/category";
 import ItemsRouter from "./routes/item";
-import { graphqlHTTP } from 'express-graphql'
 import { resolver } from './schema/resolver'
 import expressPlayground from 'graphql-playground-middleware-express'
 import authMiddleware from "./middleware/auth";
 import isDev from "./utils/isDev";
-import { makeExecutableSchema } from '@graphql-tools/schema'
 import * as typeDefs from './schema/schema.graphql'
+import { createSchema, createYoga } from "graphql-yoga";
+import { Context } from './types/context'
 
 dotenv.config();
-
-interface Context {
-  user_id: string;
-}
 
 declare global {
   namespace Express {
@@ -45,18 +41,14 @@ app.use("/item", ItemsRouter);
 app.use("/category", CategoryRouter);
 app.use("/auth", AuthRouter);
 
-const schema = makeExecutableSchema({
-  typeDefs
+const yoga = createYoga({
+  schema: createSchema({
+    typeDefs,
+    resolvers: resolver,
+  })
 })
 
-app.use('/graphql', graphqlHTTP({
-  schema,
-  graphiql: true,
-  rootValue: {
-    ...resolver.Query,
-    ...resolver.Mutation,
-  },
-}));
+app.use('/graphql', yoga)
 
 // define a route handler for the default home page
 app.get("/", (_req, res) => {

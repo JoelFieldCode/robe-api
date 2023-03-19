@@ -1,20 +1,18 @@
 import { PrismaClient } from '@prisma/client'
-import { Request } from 'express'
-import { QueryGetCategoryArgs, QueryGetCategoryItemsArgs, MutationCreateCategoryArgs, MutationCreateItemArgs } from '../types/generated'
+import { Resolvers } from '../gql/server/resolvers-types'
 
 const prisma = new PrismaClient()
 
-// TODO get full resolver/context/parent types working from codegen?
-export const resolver = {
+export const resolver: Resolvers = {
   Query: {
-    getCategories: async (_args: void, req: Request) => {
+    getCategories: async (parent, query, { req }) => {
       return await prisma.category.findMany({
         where: {
           user_id: req.context.user_id,
         }
       })
     },
-    getCategory: async ({ categoryId }: QueryGetCategoryArgs, req: Request) => {
+    getCategory: async (parent, { categoryId }, { req }) => {
       return await prisma.category.findFirstOrThrow({
         where: {
           id: categoryId,
@@ -22,7 +20,7 @@ export const resolver = {
         }
       })
     },
-    getCategoryItems: async ({ categoryId }: QueryGetCategoryItemsArgs, req: Request) => {
+    getCategoryItems: async (parent, { categoryId }, { req }) => {
       return await prisma.item.findMany({
         where: {
           categoryId,
@@ -32,11 +30,11 @@ export const resolver = {
     },
   },
   Mutation: {
-    createCategory: async ({ input }: MutationCreateCategoryArgs, req: Request) => {
+    createCategory: async (parent, { input }, { req }) => {
       const { name, image_url } = input
       return await prisma.category.create({ data: { name, image_url, user_id: req.context.user_id } })
     },
-    createItem: async ({ input }: MutationCreateItemArgs, req: Request) => {
+    createItem: async (parent, { input }, { req }) => {
       const { name, image_url, url, price, category_id } = input
       // validate this user owns the category
       await prisma.category.findFirstOrThrow({
