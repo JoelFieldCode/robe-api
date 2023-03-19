@@ -1,17 +1,19 @@
 import cors from "cors";
+import 'graphql-import-node'
 import dotenv from "dotenv";
-import express, { json, NextFunction, Request, Response, Express } from "express";
+import express, { json } from "express";
 import bearerToken from "express-bearer-token";
-import HttpException from "./exceptions/HttpException";
 import { errorHandler } from "./middleware/errorHandler";
 import AuthRouter from "./routes/auth";
 import CategoryRouter from "./routes/category";
 import ItemsRouter from "./routes/item";
 import { graphqlHTTP } from 'express-graphql'
-import { schema, resolver } from './schema'
+import { resolver } from './schema/resolver'
 import expressPlayground from 'graphql-playground-middleware-express'
 import authMiddleware from "./middleware/auth";
 import isDev from "./utils/isDev";
+import { makeExecutableSchema } from '@graphql-tools/schema'
+import * as typeDefs from './schema/schema.graphql'
 
 dotenv.config();
 
@@ -43,13 +45,21 @@ app.use("/item", ItemsRouter);
 app.use("/category", CategoryRouter);
 app.use("/auth", AuthRouter);
 
+const schema = makeExecutableSchema({
+  typeDefs
+})
+
 app.use('/graphql', graphqlHTTP({
-  schema: schema,
-  rootValue: resolver,
+  schema,
+  graphiql: true,
+  rootValue: {
+    ...resolver.Query,
+    ...resolver.Mutation,
+  },
 }));
 
 // define a route handler for the default home page
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Hello ");
 });
 if (isDev()) {

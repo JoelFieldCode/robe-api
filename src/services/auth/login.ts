@@ -51,7 +51,7 @@ export async function login(req: Request) {
 function createToken(userId: string): string {
   const payload = getAccessTokenPayload(userId);
   const token = sign(payload, process.env.SECRET, {
-    // TODO make it expire in 5 mins
+    // TODO make it expire in 5 mins instead with refresh
     expiresIn: 86400,
   });
   return token;
