@@ -1,6 +1,9 @@
 import pool from "../../database/pool";
 import Category from "../../models/Category";
+import { Request } from 'express'
+import { prisma } from '../../database/prismaClient'
 
+// TODO delete after fully moving to prisma
 export const getUserCategories = async (
   userId: string
 ): Promise<Category[]> => {
@@ -14,3 +17,16 @@ export const getUserCategories = async (
     item_count: Number(category.item_count),
   }));
 };
+
+// validate this user owns the category
+export const getUserCategory = async (req: Request, categoryId: number) => {
+  return await prisma.category.findFirstOrThrow({
+    where: {
+      user_id: req.context.user_id,
+      id: categoryId,
+    },
+    include: {
+      items: true
+    }
+  })
+}

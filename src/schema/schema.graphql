@@ -34,4 +34,5 @@ type Query {
 type Mutation {
   createCategory(input: CreateCategoryInput): Category
   createItem(input: CreateItemInput): Item
+  deleteCategory(categoryId: Int!): String
 }

@@ -29,7 +29,7 @@ model Item{
   price Float @db.DoublePrecision
   image_url String @db.Text
   user_id String @db.VarChar(150)
-  category Category @relation(fields: [categoryId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   categoryId Int
 }
 
