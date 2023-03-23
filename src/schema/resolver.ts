@@ -44,6 +44,16 @@ export const resolver: Resolvers = {
         }
       })
       return 'Success'
+    },
+    deleteItem: async (_parent, { itemId }, { req }) => {
+      // user id matches item, allow deletion
+      await prisma.item.findFirstOrThrow({ where: { id: itemId, user_id: req.context.user_id } })
+      await prisma.item.delete({
+        where: {
+          id: itemId,
+        }
+      })
+      return 'Success'
     }
   }
 };

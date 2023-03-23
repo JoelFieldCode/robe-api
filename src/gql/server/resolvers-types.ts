@@ -49,6 +49,7 @@ export type Mutation = {
   createCategory?: Maybe<Category>;
   createItem?: Maybe<Item>;
   deleteCategory?: Maybe<Scalars['String']>;
+  deleteItem?: Maybe<Scalars['String']>;
 };
 
 
@@ -64,6 +65,11 @@ export type MutationCreateItemArgs = {
 
 export type MutationDeleteCategoryArgs = {
   categoryId: Scalars['Int'];
+};
+
+
+export type MutationDeleteItemArgs = {
+  itemId: Scalars['Int'];
 };
 
 export type Query = {
@@ -200,6 +206,7 @@ export type MutationResolvers<ContextType = AppContext, ParentType extends Resol
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, Partial<MutationCreateCategoryArgs>>;
   createItem?: Resolver<Maybe<ResolversTypes['Item']>, ParentType, ContextType, Partial<MutationCreateItemArgs>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'categoryId'>>;
+  deleteItem?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, 'itemId'>>;
 }>;
 
 export type QueryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
