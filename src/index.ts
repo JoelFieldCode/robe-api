@@ -13,26 +13,13 @@ import authMiddleware from "./middleware/auth";
 import isDev from "./utils/isDev";
 import * as typeDefs from './schema/schema.graphql'
 import { createSchema, createYoga } from "graphql-yoga";
-import { Context } from './types/context'
 
 dotenv.config();
-
-declare global {
-  namespace Express {
-    interface Request {
-      context: Context;
-    }
-  }
-}
 
 const app = express();
 app.use(json());
 app.use(cors());
 app.use(bearerToken());
-app.use((req, _res, next) => {
-  req.context = { user_id: 'null' };
-  next();
-});
 app.use(authMiddleware)
 
 const PORT = process.env.PORT || 8080;
@@ -41,14 +28,14 @@ app.use("/item", ItemsRouter);
 app.use("/category", CategoryRouter);
 app.use("/auth", AuthRouter);
 
-const yoga = createYoga({
+const yogaServer = createYoga({
   schema: createSchema({
     typeDefs,
     resolvers: resolver,
   })
 })
 
-app.use('/graphql', yoga)
+app.use('/graphql', yogaServer)
 
 // define a route handler for the default home page
 app.get("/", (_req, res) => {

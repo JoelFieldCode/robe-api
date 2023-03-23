@@ -18,7 +18,9 @@ export default function authMiddleware(
     null,
     (err: JsonWebTokenError, decoded: AccessTokenPayload) => {
       if (!err) {
-        req.context.user_id = decoded.userId;
+        req.context = {
+          user_id: decoded.userId
+        }
         next();
       } else {
         next(new HttpException(401, "Unauthenticated"));
