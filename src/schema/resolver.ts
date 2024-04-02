@@ -1,4 +1,4 @@
-import { Resolvers } from '../gql/server/resolvers-types'
+import { Category, Resolvers } from '../gql/server/resolvers-types'
 import { prisma } from '../database/prismaClient'
 import { getUserCategory } from '../services/category';
 
@@ -13,16 +13,18 @@ export const resolver: Resolvers = {
     },
     getCategory: async (_parent, { categoryId }, { req }) => {
       return await prisma.category.findFirstOrThrow({
+        include: { items: true },
         where: {
           id: categoryId,
           user_id: req.context.user_id,
         }
       })
     },
-    getCategoryItems: async (_parent, { categoryId }, { req }) => {
-      const category = await getUserCategory(req, categoryId)
+  },
+  Category: {
+    items(category: Category) {
       return category.items
-    },
+    }
   },
   Mutation: {
     createCategory: async (_parent, { input }, { req }) => {

@@ -15,6 +15,7 @@ type Category {
   name: String!
   id: Int!
   image_url: String!
+  items: [Item!]
 }
 
 type Item {
@@ -28,7 +29,6 @@ type Item {
 type Query {
   getCategories: [Category!]
   getCategory(categoryId: Int!): Category
-  getCategoryItems(categoryId: Int!): [Item!]
 }
 
 type Mutation {

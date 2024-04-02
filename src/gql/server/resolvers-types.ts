@@ -19,6 +19,7 @@ export type Category = {
   __typename?: 'Category';
   id: Scalars['Int'];
   image_url: Scalars['String'];
+  items?: Maybe<Array<Item>>;
   name: Scalars['String'];
 };
 
@@ -76,16 +77,10 @@ export type Query = {
   __typename?: 'Query';
   getCategories?: Maybe<Array<Category>>;
   getCategory?: Maybe<Category>;
-  getCategoryItems?: Maybe<Array<Item>>;
 };
 
 
 export type QueryGetCategoryArgs = {
-  categoryId: Scalars['Int'];
-};
-
-
-export type QueryGetCategoryItemsArgs = {
   categoryId: Scalars['Int'];
 };
 
@@ -189,6 +184,7 @@ export type ResolversParentTypes = ResolversObject<{
 export type CategoryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   image_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  items?: Resolver<Maybe<Array<ResolversTypes['Item']>>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -212,7 +208,6 @@ export type MutationResolvers<ContextType = AppContext, ParentType extends Resol
 export type QueryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getCategories?: Resolver<Maybe<Array<ResolversTypes['Category']>>, ParentType, ContextType>;
   getCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'categoryId'>>;
-  getCategoryItems?: Resolver<Maybe<Array<ResolversTypes['Item']>>, ParentType, ContextType, RequireFields<QueryGetCategoryItemsArgs, 'categoryId'>>;
 }>;
 
 export type Resolvers<ContextType = AppContext> = ResolversObject<{
