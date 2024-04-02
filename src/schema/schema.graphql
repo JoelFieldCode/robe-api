@@ -24,6 +24,7 @@ type Item {
   image_url: String!
   url: String!
   price: Float!
+  categoryId: Int!
 }
 
 type Query {

@@ -38,6 +38,7 @@ export type CreateItemInput = {
 
 export type Item = {
   __typename?: 'Item';
+  categoryId: Scalars['Int'];
   id: Scalars['Int'];
   image_url: Scalars['String'];
   name: Scalars['String'];
@@ -190,6 +191,7 @@ export type CategoryResolvers<ContextType = AppContext, ParentType extends Resol
 }>;
 
 export type ItemResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Item'] = ResolversParentTypes['Item']> = ResolversObject<{
+  categoryId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   image_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
