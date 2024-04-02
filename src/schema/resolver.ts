@@ -2,6 +2,9 @@ import { Category, Resolvers } from '../gql/server/resolvers-types'
 import { prisma } from '../database/prismaClient'
 import { getUserCategory } from '../services/category';
 
+/*
+  TODO swap all GQL types to camel case
+*/
 export const resolver: Resolvers = {
   Query: {
     getCategories: async (_parent, query, { req }) => {
@@ -32,9 +35,9 @@ export const resolver: Resolvers = {
       return await prisma.category.create({ data: { name, image_url, user_id: req.context.user_id } })
     },
     createItem: async (_parent, { input }, { req }) => {
-      const { name, image_url, url, price, category_id } = input
+      const { name, image_url, url, price, categoryId } = input
       // should move to middleware?
-      const category = await getUserCategory(req, category_id)
+      const category = await getUserCategory(req, categoryId)
       return await prisma.item.create({ data: { categoryId: category.id, name, image_url, url, price, user_id: req.context.user_id } })
     },
     deleteCategory: async (parent, { categoryId }, { req }) => {

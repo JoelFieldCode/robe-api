@@ -8,7 +8,7 @@ input CreateItemInput {
   image_url: String!
   url: String!
   price: Float!
-  category_id: Int!
+  categoryId: Int!
 }
 
 type Category {

@@ -29,7 +29,7 @@ export type CreateCategoryInput = {
 };
 
 export type CreateItemInput = {
-  category_id: Scalars['Int'];
+  categoryId: Scalars['Int'];
   image_url: Scalars['String'];
   name: Scalars['String'];
   price: Scalars['Float'];
