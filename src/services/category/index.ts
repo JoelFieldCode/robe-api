@@ -25,8 +25,5 @@ export const getUserCategory = async (req: Request, categoryId: number) => {
       user_id: req.context.user_id,
       id: categoryId,
     },
-    include: {
-      items: true
-    }
   })
 }

@@ -7,7 +7,7 @@ import { getUserCategory } from '../services/category';
 */
 export const resolver: Resolvers = {
   Query: {
-    getCategories: async (_parent, query, { req }) => {
+    getCategories: async (_parent, _query, { req }) => {
       const categories = await prisma.category.findMany({
         include: { _count: { select: { items: true } } },
         where: {
@@ -39,14 +39,8 @@ export const resolver: Resolvers = {
     // this is technically a N+1 bug but only if FE requests all categories with all items
     // we should validate to make sure you can't do this
     items: async (category: Category) => {
-      const { items } = await prisma.category.findFirstOrThrow({
-        include: { items: true },
-        where: {
-          // don't need to check user_id here as this should already be checked by parent resolver
-          id: category.id,
-        }
-      })
-      return items
+      // don't need to check user_id here as this should already be checked by parent resolver
+      return await prisma.item.findMany({ where: { categoryId: category.id } })
     },
   },
   Mutation: {
