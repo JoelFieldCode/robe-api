@@ -16,6 +16,7 @@ type Category {
   id: Int!
   image_url: String!
   items: [Item!]
+  itemCount: Int!
 }
 
 type Item {

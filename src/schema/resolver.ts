@@ -8,31 +8,57 @@ import { getUserCategory } from '../services/category';
 export const resolver: Resolvers = {
   Query: {
     getCategories: async (_parent, query, { req }) => {
-      return await prisma.category.findMany({
+      const categories = await prisma.category.findMany({
+        include: { _count: { select: { items: true } } },
         where: {
           user_id: req.context.user_id,
         }
       })
+
+      return categories.map(({ _count, ...rest }) => ({
+        ...rest,
+        itemCount: _count.items
+      }))
     },
     getCategory: async (_parent, { categoryId }, { req }) => {
-      return await prisma.category.findFirstOrThrow({
-        include: { items: true },
+      const { _count, ...rest } = await prisma.category.findFirstOrThrow({
+        include: { _count: { select: { items: true } } },
         where: {
           id: categoryId,
           user_id: req.context.user_id,
         }
       })
+      return {
+        ...rest,
+        itemCount: _count.items
+      }
+
     },
   },
   Category: {
-    items(category: Category) {
-      return category.items
-    }
+    // this is technically a N+1 bug but only if FE requests all categories with all items
+    // we should validate to make sure you can't do this
+    items: async (category: Category) => {
+      const { items } = await prisma.category.findFirstOrThrow({
+        include: { items: true },
+        where: {
+          // don't need to check user_id here as this should already be checked by parent resolver
+          id: category.id,
+        }
+      })
+      return items
+    },
   },
   Mutation: {
     createCategory: async (_parent, { input }, { req }) => {
       const { name, image_url } = input
-      return await prisma.category.create({ data: { name, image_url, user_id: req.context.user_id } })
+      const category = await prisma.category.create({ data: { name, image_url, user_id: req.context.user_id } })
+
+      return {
+        ...category,
+        // not possible to create an item without a category
+        itemCount: 0,
+      }
     },
     createItem: async (_parent, { input }, { req }) => {
       const { name, image_url, url, price, categoryId } = input

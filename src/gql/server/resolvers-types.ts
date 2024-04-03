@@ -19,6 +19,7 @@ export type Category = {
   __typename?: 'Category';
   id: Scalars['Int'];
   image_url: Scalars['String'];
+  itemCount: Scalars['Int'];
   items?: Maybe<Array<Item>>;
   name: Scalars['String'];
 };
@@ -185,6 +186,7 @@ export type ResolversParentTypes = ResolversObject<{
 export type CategoryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   image_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  itemCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   items?: Resolver<Maybe<Array<ResolversTypes['Item']>>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
