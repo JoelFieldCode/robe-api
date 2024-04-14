@@ -9,7 +9,6 @@
     "prestart": "npm run build",
     "start": "node .",
     "start:watch": "nodemon src/index.ts",
-    "seed": "node dist/database/generate.js",
     "test": "jest --runInBand",
     "test:watch": "jest --runInBand --watch",
     "migrate": "npx prisma migrate dev && npx prisma generate",

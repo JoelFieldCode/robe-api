@@ -4,9 +4,6 @@ import dotenv from "dotenv";
 import express, { json } from "express";
 import bearerToken from "express-bearer-token";
 import { errorHandler } from "./middleware/errorHandler";
-import AuthRouter from "./routes/auth";
-import CategoryRouter from "./routes/category";
-import ItemsRouter from "./routes/item";
 import { resolver } from './schema/resolver'
 import expressPlayground from 'graphql-playground-middleware-express'
 import authMiddleware from "./middleware/auth";
@@ -24,10 +21,6 @@ app.use(authMiddleware)
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 8080;
-
-app.use("/item", ItemsRouter);
-app.use("/category", CategoryRouter);
-app.use("/auth", AuthRouter);
 
 const yogaServer = createYoga({
   schema: createSchema({
