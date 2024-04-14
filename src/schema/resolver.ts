@@ -1,6 +1,7 @@
 import { Category, Resolvers } from '../gql/server/resolvers-types'
 import { prisma } from '../database/prismaClient'
 import { getUserCategory } from '../services/category';
+import { login } from '../services/auth/login';
 
 /*
   TODO swap all GQL types to camel case
@@ -44,6 +45,11 @@ export const resolver: Resolvers = {
     },
   },
   Mutation: {
+    login: async (_parent, _input, { req }) => {
+      const token = await login(req);
+
+      return { token }
+    },
     createCategory: async (_parent, { input }, { req }) => {
       const { name, image_url } = input
       const category = await prisma.category.create({ data: { name, image_url, user_id: req.context.user_id } })

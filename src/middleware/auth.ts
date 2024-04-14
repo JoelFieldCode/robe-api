@@ -9,7 +9,7 @@ export default function authMiddleware(
   _res: Response,
   next: NextFunction
 ) {
-  if (req.path.includes('/auth') || req.path === '/playground') {
+  if (req.path.includes('/auth') || req.body.query.includes('login') || req.path === '/playground') {
     return next()
   }
   verify(

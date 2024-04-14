@@ -28,6 +28,10 @@ type Item {
   categoryId: Int!
 }
 
+type AuthResponse {
+  token: String!
+}
+
 type Query {
   getCategories: [Category!]
   getCategory(categoryId: Int!): Category
@@ -38,4 +42,5 @@ type Mutation {
   createItem(input: CreateItemInput): Item
   deleteCategory(categoryId: Int!): String
   deleteItem(itemId: Int!): String
+  login: AuthResponse!
 }

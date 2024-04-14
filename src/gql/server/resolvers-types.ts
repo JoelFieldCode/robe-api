@@ -15,6 +15,11 @@ export type Scalars = {
   Float: number;
 };
 
+export type AuthResponse = {
+  __typename?: 'AuthResponse';
+  token: Scalars['String'];
+};
+
 export type Category = {
   __typename?: 'Category';
   id: Scalars['Int'];
@@ -53,6 +58,7 @@ export type Mutation = {
   createItem?: Maybe<Item>;
   deleteCategory?: Maybe<Scalars['String']>;
   deleteItem?: Maybe<Scalars['String']>;
+  login?: Maybe<AuthResponse>;
 };
 
 
@@ -157,6 +163,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  AuthResponse: ResolverTypeWrapper<AuthResponse>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Category: ResolverTypeWrapper<Category>;
   CreateCategoryInput: CreateCategoryInput;
@@ -171,6 +178,7 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  AuthResponse: AuthResponse;
   Boolean: Scalars['Boolean'];
   Category: Category;
   CreateCategoryInput: CreateCategoryInput;
@@ -181,6 +189,11 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   Query: {};
   String: Scalars['String'];
+}>;
+
+export type AuthResponseResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['AuthResponse'] = ResolversParentTypes['AuthResponse']> = ResolversObject<{
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type CategoryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
@@ -207,6 +220,7 @@ export type MutationResolvers<ContextType = AppContext, ParentType extends Resol
   createItem?: Resolver<Maybe<ResolversTypes['Item']>, ParentType, ContextType, Partial<MutationCreateItemArgs>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'categoryId'>>;
   deleteItem?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, 'itemId'>>;
+  login?: Resolver<Maybe<ResolversTypes['AuthResponse']>, ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -215,6 +229,7 @@ export type QueryResolvers<ContextType = AppContext, ParentType extends Resolver
 }>;
 
 export type Resolvers<ContextType = AppContext> = ResolversObject<{
+  AuthResponse?: AuthResponseResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   Item?: ItemResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
