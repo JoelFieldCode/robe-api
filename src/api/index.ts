@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 8080;
 const yogaServer = createYoga({
   schema: createSchema({
     typeDefs: fs.readFileSync(
-      path.join(__dirname, "../schema/schema.graphql"),
+      path.join(__dirname, "../../schema.graphql"),
       "utf8"
     ),
     resolvers: resolver,
