@@ -2,13 +2,13 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express, { json } from "express";
 import bearerToken from "express-bearer-token";
-import "graphql-import-node";
+import fs from "fs";
 import expressPlayground from "graphql-playground-middleware-express";
 import { createSchema, createYoga } from "graphql-yoga";
+import path from "path";
 import authMiddleware from "../middleware/auth";
 import { errorHandler } from "../middleware/errorHandler";
 import { resolver } from "../schema/resolver";
-import * as typeDefs from "../schema/schema.graphql";
 import isDev from "../utils/isDev";
 
 dotenv.config();
@@ -24,7 +24,10 @@ const PORT = process.env.PORT || 8080;
 
 const yogaServer = createYoga({
   schema: createSchema({
-    typeDefs,
+    typeDefs: fs.readFileSync(
+      path.join(__dirname, "../schema/schema.graphql"),
+      "utf8"
+    ),
     resolvers: resolver,
   })
 });
