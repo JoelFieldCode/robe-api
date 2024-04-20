@@ -6,10 +6,10 @@ import fs from "fs";
 import expressPlayground from "graphql-playground-middleware-express";
 import { createSchema, createYoga } from "graphql-yoga";
 import path from "path";
-import authMiddleware from "../middleware/auth";
-import { errorHandler } from "../middleware/errorHandler";
-import { resolver } from "../schema/resolver";
-import isDev from "../utils/isDev";
+import authMiddleware from "./middleware/auth";
+import { errorHandler } from "./middleware/errorHandler";
+import { resolver } from "./schema/resolver";
+import isDev from "./utils/isDev";
 
 dotenv.config();
 
@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 8080;
 const yogaServer = createYoga({
   schema: createSchema({
     typeDefs: fs.readFileSync(
-      path.join(__dirname, "../../schema.graphql"),
+      path.join(__dirname, "./schema.graphql"),
       "utf8"
     ),
     resolvers: resolver,
