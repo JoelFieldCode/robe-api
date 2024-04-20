@@ -9,8 +9,8 @@ export default function authMiddleware(
   _res: Response,
   next: NextFunction
 ) {
-  if (req.path.includes('/auth') || req.body.query.includes('login') || req.path === '/playground') {
-    return next()
+  if (req.path.includes("/auth") || req.body.query.includes("login") || req.path === "/playground") {
+    return next();
   }
   verify(
     req.token,
@@ -20,7 +20,7 @@ export default function authMiddleware(
       if (!err) {
         req.context = {
           user_id: decoded.userId
-        }
+        };
         next();
       } else {
         next(new HttpException(401, "Unauthenticated"));

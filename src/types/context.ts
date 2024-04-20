@@ -1,5 +1,4 @@
-import { Request, Response } from 'express'
-
+import { Request, Response } from "express";
 
 export interface Context {
     user_id: string;
@@ -7,11 +6,11 @@ export interface Context {
 
 type AppRequest = Request & {
     context: Context;
-}
+};
 
 export interface AppContext {
-    req: AppRequest,
-    res: Response
+    req: AppRequest;
+    res: Response;
 }
 
 declare global {

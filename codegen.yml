@@ -8,3 +8,15 @@ generates:
     plugins:
       - typescript
       - typescript-resolvers
+      - add:
+          content: "// tslint:disable max-line-length"
+      - add:
+          content: "// tslint:disable no-namespace"
+      - add:
+          content: "// tslint:disable max-classes-per-file"
+      - add:
+          content: "// tslint:disable trailing-comma"
+      - add:
+          content: "// tslint:disable no-string-literal"
+      - add:
+          content: "// tslint:disable no-shadowed-variable array-type"

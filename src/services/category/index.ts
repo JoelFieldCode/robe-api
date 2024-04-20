@@ -1,5 +1,5 @@
-import { Request } from 'express'
-import { prisma } from '../../database/prismaClient'
+import { Request } from "express";
+import { prisma } from "../../database/prismaClient";
 
 // validate this user owns the category
 export const getUserCategory = async (req: Request, categoryId: number) => {
@@ -8,5 +8,5 @@ export const getUserCategory = async (req: Request, categoryId: number) => {
       user_id: req.context.user_id,
       id: categoryId,
     },
-  })
-}
+  });
+};

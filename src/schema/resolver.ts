@@ -1,7 +1,7 @@
-import { Category, Resolvers } from '../gql/server/resolvers-types'
-import { prisma } from '../database/prismaClient'
-import { getUserCategory } from '../services/category';
-import { login } from '../services/auth/login';
+import { prisma } from "../database/prismaClient";
+import { Category, Resolvers } from "../gql/server/resolvers-types";
+import { login } from "../services/auth/login";
+import { getUserCategory } from "../services/category";
 
 /*
   TODO swap all GQL types to camel case
@@ -13,13 +13,13 @@ export const resolver: Resolvers = {
         include: { _count: { select: { items: true } } },
         where: {
           user_id: req.context.user_id,
-        }
-      })
+        },
+      });
 
       return categories.map(({ _count, ...rest }) => ({
         ...rest,
-        itemCount: _count.items
-      }))
+        itemCount: _count.items,
+      }));
     },
     getCategory: async (_parent, { categoryId }, { req }) => {
       const { _count, ...rest } = await prisma.category.findFirstOrThrow({
@@ -27,13 +27,12 @@ export const resolver: Resolvers = {
         where: {
           id: categoryId,
           user_id: req.context.user_id,
-        }
-      })
+        },
+      });
       return {
         ...rest,
-        itemCount: _count.items
-      }
-
+        itemCount: _count.items,
+      };
     },
   },
   Category: {
@@ -41,50 +40,63 @@ export const resolver: Resolvers = {
     // we should validate to make sure you can't do this
     items: async (category: Category) => {
       // don't need to check user_id here as this should already be checked by parent resolver
-      return await prisma.item.findMany({ where: { categoryId: category.id } })
+      return await prisma.item.findMany({ where: { categoryId: category.id } });
     },
   },
   Mutation: {
     login: async (_parent, _input, { req }) => {
       const token = await login(req);
 
-      return { token }
+      return { token };
     },
     createCategory: async (_parent, { input }, { req }) => {
-      const { name, image_url } = input
-      const category = await prisma.category.create({ data: { name, image_url, user_id: req.context.user_id } })
+      const { name, image_url } = input;
+      const category = await prisma.category.create({
+        data: { name, image_url, user_id: req.context.user_id },
+      });
 
       return {
         ...category,
         // not possible to create an item without a category
         itemCount: 0,
-      }
+      };
     },
     createItem: async (_parent, { input }, { req }) => {
-      const { name, image_url, url, price, categoryId } = input
+      const { name, image_url, url, price, categoryId } = input;
       // should move to middleware?
-      const category = await getUserCategory(req, categoryId)
-      return await prisma.item.create({ data: { categoryId: category.id, name, image_url, url, price, user_id: req.context.user_id } })
+      const category = await getUserCategory(req, categoryId);
+      return await prisma.item.create({
+        data: {
+          categoryId: category.id,
+          name,
+          image_url,
+          url,
+          price,
+          user_id: req.context.user_id,
+        },
+      });
     },
     deleteCategory: async (parent, { categoryId }, { req }) => {
       // should move to middleware?
-      const category = await getUserCategory(req, categoryId)
+      const category = await getUserCategory(req, categoryId);
       await prisma.category.delete({
         where: {
           id: category.id,
-        }
-      })
-      return 'Success'
+        },
+      });
+      return "Success";
     },
     deleteItem: async (_parent, { itemId }, { req }) => {
       // user id matches item, allow deletion
-      await prisma.item.findFirstOrThrow({ where: { id: itemId, user_id: req.context.user_id } })
+      await prisma.item.findFirstOrThrow({
+        where: { id: itemId, user_id: req.context.user_id },
+      });
       await prisma.item.delete({
         where: {
           id: itemId,
-        }
-      })
-      return 'Success'
-    }
-  }
+        },
+      });
+      return "Success";
+    },
+  },
 };
