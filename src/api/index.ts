@@ -5,11 +5,11 @@ import bearerToken from "express-bearer-token";
 import "graphql-import-node";
 import expressPlayground from "graphql-playground-middleware-express";
 import { createSchema, createYoga } from "graphql-yoga";
-import authMiddleware from "./middleware/auth";
-import { errorHandler } from "./middleware/errorHandler";
-import { resolver } from "./schema/resolver";
-import * as typeDefs from "./schema/schema.graphql";
-import isDev from "./utils/isDev";
+import authMiddleware from "../middleware/auth";
+import { errorHandler } from "../middleware/errorHandler";
+import { resolver } from "../schema/resolver";
+import * as typeDefs from "../schema/schema.graphql";
+import isDev from "../utils/isDev";
 
 dotenv.config();
 

@@ -9,16 +9,16 @@ export default function authMiddleware(
   _res: Response,
   next: NextFunction
 ) {
-  if (req.url === '/playground') {
-    return next()
+  if (req.url === "/playground") {
+    return next();
   }
 
   if (!req.body.query) {
-    return next()
+    return next();
   }
 
   if (req.body.query.includes("login")) {
-    return next()
+    return next();
   }
   verify(
     req.token,
