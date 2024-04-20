@@ -1,11 +1,11 @@
 input CreateCategoryInput {
   name: String!
-  image_url: String!
+  image_url: String
 }
 
 input CreateItemInput {
   name: String!
-  image_url: String!
+  image_url: String
   url: String!
   price: Float!
   categoryId: Int!
@@ -14,7 +14,7 @@ input CreateItemInput {
 type Category {
   name: String!
   id: Int!
-  image_url: String!
+  image_url: String
   items: [Item!]
   itemCount: Int!
 }
@@ -22,7 +22,7 @@ type Category {
 type Item {
   name: String!
   id: Int!
-  image_url: String!
+  image_url: String
   url: String!
   price: Float!
   categoryId: Int!

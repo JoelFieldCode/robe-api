@@ -23,20 +23,20 @@ export type AuthResponse = {
 export type Category = {
   __typename?: 'Category';
   id: Scalars['Int'];
-  image_url: Scalars['String'];
+  image_url?: Maybe<Scalars['String']>;
   itemCount: Scalars['Int'];
   items?: Maybe<Array<Item>>;
   name: Scalars['String'];
 };
 
 export type CreateCategoryInput = {
-  image_url: Scalars['String'];
+  image_url?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
 export type CreateItemInput = {
   categoryId: Scalars['Int'];
-  image_url: Scalars['String'];
+  image_url?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   price: Scalars['Float'];
   url: Scalars['String'];
@@ -46,7 +46,7 @@ export type Item = {
   __typename?: 'Item';
   categoryId: Scalars['Int'];
   id: Scalars['Int'];
-  image_url: Scalars['String'];
+  image_url?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   price: Scalars['Float'];
   url: Scalars['String'];
@@ -58,7 +58,7 @@ export type Mutation = {
   createItem?: Maybe<Item>;
   deleteCategory?: Maybe<Scalars['String']>;
   deleteItem?: Maybe<Scalars['String']>;
-  login?: Maybe<AuthResponse>;
+  login: AuthResponse;
 };
 
 
@@ -198,7 +198,7 @@ export type AuthResponseResolvers<ContextType = AppContext, ParentType extends R
 
 export type CategoryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  image_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   itemCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   items?: Resolver<Maybe<Array<ResolversTypes['Item']>>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -208,7 +208,7 @@ export type CategoryResolvers<ContextType = AppContext, ParentType extends Resol
 export type ItemResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Item'] = ResolversParentTypes['Item']> = ResolversObject<{
   categoryId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  image_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -220,7 +220,7 @@ export type MutationResolvers<ContextType = AppContext, ParentType extends Resol
   createItem?: Resolver<Maybe<ResolversTypes['Item']>, ParentType, ContextType, Partial<MutationCreateItemArgs>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'categoryId'>>;
   deleteItem?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, 'itemId'>>;
-  login?: Resolver<Maybe<ResolversTypes['AuthResponse']>, ParentType, ContextType>;
+  login?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
