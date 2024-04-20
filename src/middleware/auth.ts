@@ -9,8 +9,16 @@ export default function authMiddleware(
   _res: Response,
   next: NextFunction
 ) {
-  if (req.path.includes("/auth") || req.body.query.includes("login") || req.path === "/playground") {
-    return next();
+  if (req.url === '/playground') {
+    return next()
+  }
+
+  if (!req.body.query) {
+    return next()
+  }
+
+  if (req.body.query.includes("login")) {
+    return next()
   }
   verify(
     req.token,
