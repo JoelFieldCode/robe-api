@@ -163,31 +163,31 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   AuthResponse: ResolverTypeWrapper<AuthResponse>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   Category: ResolverTypeWrapper<Category>;
   CreateCategoryInput: CreateCategoryInput;
   CreateItemInput: CreateItemInput;
-  Float: ResolverTypeWrapper<Scalars["Float"]["output"]>;
-  Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
+  Float: ResolverTypeWrapper<Scalars["Float"]>;
+  Int: ResolverTypeWrapper<Scalars["Int"]>;
   Item: ResolverTypeWrapper<Item>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars["String"]["output"]>;
+  String: ResolverTypeWrapper<Scalars["String"]>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   AuthResponse: AuthResponse;
-  Boolean: Scalars["Boolean"]["output"];
+  Boolean: Scalars["Boolean"];
   Category: Category;
   CreateCategoryInput: CreateCategoryInput;
   CreateItemInput: CreateItemInput;
-  Float: Scalars["Float"]["output"];
-  Int: Scalars["Int"]["output"];
+  Float: Scalars["Float"];
+  Int: Scalars["Int"];
   Item: Item;
   Mutation: {};
   Query: {};
-  String: Scalars["String"]["output"];
+  String: Scalars["String"];
 }>;
 
 export type AuthResponseResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["AuthResponse"] = ResolversParentTypes["AuthResponse"]> = ResolversObject<{

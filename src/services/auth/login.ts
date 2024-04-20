@@ -1,6 +1,5 @@
 import { Request } from "express";
 import { sign } from "jsonwebtoken";
-import fetch from "node-fetch";
 import HttpException from "../../exceptions/HttpException";
 import isDev from "../../utils/isDev";
 
