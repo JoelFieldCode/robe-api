@@ -11,59 +11,61 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export interface Scalars {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+  ID: { input: string; output: string; };
+  String: { input: string; output: string; };
+  Boolean: { input: boolean; output: boolean; };
+  Int: { input: number; output: number; };
+  Float: { input: number; output: number; };
 }
 
 export interface AuthResponse {
   __typename?: "AuthResponse";
-  token: Scalars["String"];
+  token: Scalars["String"]["output"];
 }
 
 export interface Category {
   __typename?: "Category";
-  id: Scalars["Int"];
-  image_url?: Maybe<Scalars["String"]>;
-  itemCount: Scalars["Int"];
+  id: Scalars["Int"]["output"];
+  image_url?: Maybe<Scalars["String"]["output"]>;
+  itemCount: Scalars["Int"]["output"];
   items?: Maybe<Array<Item>>;
-  name: Scalars["String"];
+  name: Scalars["String"]["output"];
 }
 
 export interface CreateCategoryInput {
-  image_url?: InputMaybe<Scalars["String"]>;
-  name: Scalars["String"];
+  image_url?: InputMaybe<Scalars["String"]["input"]>;
+  name: Scalars["String"]["input"];
 }
 
 export interface CreateItemInput {
-  categoryId: Scalars["Int"];
-  image_url?: InputMaybe<Scalars["String"]>;
-  name: Scalars["String"];
-  price: Scalars["Float"];
-  url: Scalars["String"];
+  categoryId: Scalars["Int"]["input"];
+  image_url?: InputMaybe<Scalars["String"]["input"]>;
+  name: Scalars["String"]["input"];
+  price: Scalars["Float"]["input"];
+  url: Scalars["String"]["input"];
 }
 
 export interface Item {
   __typename?: "Item";
-  categoryId: Scalars["Int"];
-  id: Scalars["Int"];
-  image_url?: Maybe<Scalars["String"]>;
-  name: Scalars["String"];
-  price: Scalars["Float"];
-  url: Scalars["String"];
+  categoryId: Scalars["Int"]["output"];
+  id: Scalars["Int"]["output"];
+  image_url?: Maybe<Scalars["String"]["output"]>;
+  name: Scalars["String"]["output"];
+  price: Scalars["Float"]["output"];
+  url: Scalars["String"]["output"];
 }
 
 export interface Mutation {
   __typename?: "Mutation";
   createCategory?: Maybe<Category>;
   createItem?: Maybe<Item>;
-  deleteCategory?: Maybe<Scalars["String"]>;
-  deleteItem?: Maybe<Scalars["String"]>;
+  deleteCategory?: Maybe<Scalars["String"]["output"]>;
+  deleteItem?: Maybe<Scalars["String"]["output"]>;
   login: AuthResponse;
 }
 
@@ -76,11 +78,11 @@ export interface MutationCreateItemArgs {
 }
 
 export interface MutationDeleteCategoryArgs {
-  categoryId: Scalars["Int"];
+  categoryId: Scalars["Int"]["input"];
 }
 
 export interface MutationDeleteItemArgs {
-  itemId: Scalars["Int"];
+  itemId: Scalars["Int"]["input"];
 }
 
 export interface Query {
@@ -90,7 +92,7 @@ export interface Query {
 }
 
 export interface QueryGetCategoryArgs {
-  categoryId: Scalars["Int"];
+  categoryId: Scalars["Int"]["input"];
 }
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -163,31 +165,31 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   AuthResponse: ResolverTypeWrapper<AuthResponse>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
   Category: ResolverTypeWrapper<Category>;
   CreateCategoryInput: CreateCategoryInput;
   CreateItemInput: CreateItemInput;
-  Float: ResolverTypeWrapper<Scalars["Float"]>;
-  Int: ResolverTypeWrapper<Scalars["Int"]>;
+  Float: ResolverTypeWrapper<Scalars["Float"]["output"]>;
+  Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   Item: ResolverTypeWrapper<Item>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars["String"]>;
+  String: ResolverTypeWrapper<Scalars["String"]["output"]>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   AuthResponse: AuthResponse;
-  Boolean: Scalars["Boolean"];
+  Boolean: Scalars["Boolean"]["output"];
   Category: Category;
   CreateCategoryInput: CreateCategoryInput;
   CreateItemInput: CreateItemInput;
-  Float: Scalars["Float"];
-  Int: Scalars["Int"];
+  Float: Scalars["Float"]["output"];
+  Int: Scalars["Int"]["output"];
   Item: Item;
   Mutation: {};
   Query: {};
-  String: Scalars["String"];
+  String: Scalars["String"]["output"];
 }>;
 
 export type AuthResponseResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["AuthResponse"] = ResolversParentTypes["AuthResponse"]> = ResolversObject<{
