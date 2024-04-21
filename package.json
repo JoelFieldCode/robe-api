@@ -5,8 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "rm -rf dist && tsc",
-    "postbuild": "copyfiles -u 1 src/schema.graphql dist/",
+    "build": "rm -rf dist && tsc && copyfiles -u 1 src/schema.graphql dist/",
     "build:prod": "npm run build && npm run migrate:prod",
     "prestart": "npm run build",
     "start": "node .",
