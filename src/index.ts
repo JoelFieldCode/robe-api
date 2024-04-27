@@ -18,8 +18,8 @@ import Dashboard from "supertokens-node/recipe/dashboard";
 supertokens.init({
   framework: "express",
   supertokens: {
-    connectionURI: "http://localhost:3567",
-    apiKey: "someKey" // OR can be undefined
+    connectionURI: "https://st-dev-c1c02010-0485-11ef-a00e-2b71757e7ede.aws.supertokens.io",
+    apiKey: "ZYIlidPvYMmPIIRq5qJNW0=mwz",
   },
   // TODO from ENV
   appInfo: {

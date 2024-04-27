@@ -36,7 +36,7 @@
     "graphql-yoga": "^5.3.0",
     "jsonwebtoken": "^8.5.1",
     "prisma": "^4.0.0",
-    "supertokens-node": "^17.0.5"
+    "supertokens-node": "^16.7.5"
   },
   "devDependencies": {
     "@graphql-codegen/add": "^5.0.2",
