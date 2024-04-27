@@ -1,11 +1,10 @@
-import { Request } from "express";
 import { prisma } from "../../database/prismaClient";
 
 // validate this user owns the category
-export const getUserCategory = async (req: Request, categoryId: number) => {
+export const getUserCategory = async (userId: string, categoryId: number) => {
   return await prisma.category.findFirstOrThrow({
     where: {
-      user_id: req.context.user_id,
+      user_id: userId,
       id: categoryId,
     },
   });

@@ -1,24 +1,54 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express, { json } from "express";
-import bearerToken from "express-bearer-token";
 import fs from "fs";
 import expressPlayground from "graphql-playground-middleware-express";
 import { createSchema, createYoga } from "graphql-yoga";
 import path from "path";
-import authMiddleware from "./middleware/auth";
-import { errorHandler } from "./middleware/errorHandler";
 import { resolver } from "./schema/resolver";
 import isDev from "./utils/isDev";
+
+import supertokens from "supertokens-node";
+import Session from "supertokens-node/recipe/session";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
+import { middleware } from "supertokens-node/framework/express";
+import { errorHandler } from "supertokens-node/framework/express";
+import Dashboard from "supertokens-node/recipe/dashboard";
+
+supertokens.init({
+  framework: "express",
+  supertokens: {
+    // these ended up in source control... can we change the api key?
+    connectionURI: process.env.SUPERTOKENS_URL,
+    apiKey: process.env.SUPERTOKENS_API_KEY
+  },
+  // TODO from ENV
+  appInfo: {
+    // learn more about this on https://supertokens.com/docs/session/appinfo
+    appName: "Robe",
+    apiDomain: process.env.ROBE_API_URL,
+    websiteDomain: process.env.ROBE_UI,
+    apiBasePath: "/auth",
+    websiteBasePath: "/auth",
+  },
+  recipeList: [
+    EmailPassword.init(), // initializes signin / sign up features
+    Session.init(), // initializes session features
+    Dashboard.init(),
+  ]
+});
 
 dotenv.config();
 
 const app = express();
 app.use(json());
-app.use(cors());
-app.use(bearerToken());
-app.use(authMiddleware);
-app.use(errorHandler);
+app.use(cors({
+  origin: [process.env.ROBE_UI],
+  allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
+  credentials: true,
+}));
+app.use(middleware());
+app.use(errorHandler())
 
 const PORT = process.env.PORT || 8080;
 
