@@ -1,18 +1,21 @@
 import { prisma } from "../database/prismaClient";
 import { Category, Resolvers } from "../gql/server/resolvers-types";
-import { login } from "../services/auth/login";
 import { getUserCategory } from "../services/category";
+import Session from "supertokens-node/recipe/session";
 
 /*
   TODO swap all GQL types to camel case
 */
 export const resolver: Resolvers = {
   Query: {
-    getCategories: async (_parent, _query, { req }) => {
+    getCategories: async (_parent, _query, { req, res }) => {
+      const session = await Session.getSession(req, res);
+      const userId = session.getUserId();
+
       const categories = await prisma.category.findMany({
         include: { _count: { select: { items: true } } },
         where: {
-          user_id: req.context.user_id,
+          user_id: userId
         },
       });
 
@@ -21,12 +24,15 @@ export const resolver: Resolvers = {
         itemCount: _count.items,
       }));
     },
-    getCategory: async (_parent, { categoryId }, { req }) => {
+    getCategory: async (_parent, { categoryId }, { req, res }) => {
+      const session = await Session.getSession(req, res);
+      const userId = session.getUserId();
+
       const { _count, ...rest } = await prisma.category.findFirstOrThrow({
         include: { _count: { select: { items: true } } },
         where: {
           id: categoryId,
-          user_id: req.context.user_id,
+          user_id: userId,
         },
       });
       return {
@@ -44,15 +50,12 @@ export const resolver: Resolvers = {
     },
   },
   Mutation: {
-    login: async (_parent, _input, { req }) => {
-      const token = await login(req);
-
-      return { token };
-    },
-    createCategory: async (_parent, { input }, { req }) => {
+    createCategory: async (_parent, { input }, { req, res }) => {
       const { name, image_url } = input;
+      const session = await Session.getSession(req, res);
+      const userId = session.getUserId();
       const category = await prisma.category.create({
-        data: { name, image_url, user_id: req.context.user_id },
+        data: { name, image_url, user_id: userId, },
       });
 
       return {
@@ -61,10 +64,12 @@ export const resolver: Resolvers = {
         itemCount: 0,
       };
     },
-    createItem: async (_parent, { input }, { req }) => {
+    createItem: async (_parent, { input }, { req, res }) => {
       const { name, image_url, url, price, categoryId } = input;
-      // should move to middleware?
-      const category = await getUserCategory(req, categoryId);
+      const session = await Session.getSession(req, res);
+      const userId = session.getUserId();
+      const category = await getUserCategory(userId, categoryId);
+
       return await prisma.item.create({
         data: {
           categoryId: category.id,
@@ -72,13 +77,14 @@ export const resolver: Resolvers = {
           image_url,
           url,
           price,
-          user_id: req.context.user_id,
+          user_id: userId,
         },
       });
     },
-    deleteCategory: async (parent, { categoryId }, { req }) => {
-      // should move to middleware?
-      const category = await getUserCategory(req, categoryId);
+    deleteCategory: async (parent, { categoryId }, { req, res }) => {
+      const session = await Session.getSession(req, res);
+      const userId = session.getUserId();
+      const category = await getUserCategory(userId, categoryId);
       await prisma.category.delete({
         where: {
           id: category.id,
@@ -86,10 +92,12 @@ export const resolver: Resolvers = {
       });
       return "Success";
     },
-    deleteItem: async (_parent, { itemId }, { req }) => {
+    deleteItem: async (_parent, { itemId }, { req, res }) => {
+      const session = await Session.getSession(req, res);
+      const userId = session.getUserId();
       // user id matches item, allow deletion
       await prisma.item.findFirstOrThrow({
-        where: { id: itemId, user_id: req.context.user_id },
+        where: { id: itemId, user_id: userId, },
       });
       await prisma.item.delete({
         where: {
