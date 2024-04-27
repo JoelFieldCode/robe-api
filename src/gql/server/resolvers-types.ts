@@ -4,105 +4,99 @@
 // tslint:disable trailing-comma
 // tslint:disable no-string-literal
 // tslint:disable no-shadowed-variable array-type
-import { GraphQLResolveInfo } from 'graphql';
-import { AppContext } from '../../types/context';
+import { GraphQLResolveInfo } from "graphql";
+import { AppContext } from "../../types/context";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-};
+export interface Scalars {
+  ID: { input: string; output: string; };
+  String: { input: string; output: string; };
+  Boolean: { input: boolean; output: boolean; };
+  Int: { input: number; output: number; };
+  Float: { input: number; output: number; };
+}
 
-export type Category = {
-  __typename?: 'Category';
-  id: Scalars['Int']['output'];
-  image_url?: Maybe<Scalars['String']['output']>;
-  itemCount: Scalars['Int']['output'];
+export interface Category {
+  __typename?: "Category";
+  id: Scalars["Int"]["output"];
+  image_url?: Maybe<Scalars["String"]["output"]>;
+  itemCount: Scalars["Int"]["output"];
   items?: Maybe<Array<Item>>;
-  name: Scalars['String']['output'];
-};
+  name: Scalars["String"]["output"];
+}
 
-export type CreateCategoryInput = {
-  image_url?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
-};
+export interface CreateCategoryInput {
+  image_url?: InputMaybe<Scalars["String"]["input"]>;
+  name: Scalars["String"]["input"];
+}
 
-export type CreateItemInput = {
-  categoryId: Scalars['Int']['input'];
-  image_url?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
-  price: Scalars['Float']['input'];
-  url: Scalars['String']['input'];
-};
+export interface CreateItemInput {
+  categoryId: Scalars["Int"]["input"];
+  image_url?: InputMaybe<Scalars["String"]["input"]>;
+  name: Scalars["String"]["input"];
+  price: Scalars["Float"]["input"];
+  url: Scalars["String"]["input"];
+}
 
-export type Item = {
-  __typename?: 'Item';
-  categoryId: Scalars['Int']['output'];
-  id: Scalars['Int']['output'];
-  image_url?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  price: Scalars['Float']['output'];
-  url: Scalars['String']['output'];
-};
+export interface Item {
+  __typename?: "Item";
+  categoryId: Scalars["Int"]["output"];
+  id: Scalars["Int"]["output"];
+  image_url?: Maybe<Scalars["String"]["output"]>;
+  name: Scalars["String"]["output"];
+  price: Scalars["Float"]["output"];
+  url: Scalars["String"]["output"];
+}
 
-export type Mutation = {
-  __typename?: 'Mutation';
+export interface Mutation {
+  __typename?: "Mutation";
   createCategory?: Maybe<Category>;
   createItem?: Maybe<Item>;
-  deleteCategory?: Maybe<Scalars['String']['output']>;
-  deleteItem?: Maybe<Scalars['String']['output']>;
-};
+  deleteCategory?: Maybe<Scalars["String"]["output"]>;
+  deleteItem?: Maybe<Scalars["String"]["output"]>;
+}
 
-
-export type MutationCreateCategoryArgs = {
+export interface MutationCreateCategoryArgs {
   input?: InputMaybe<CreateCategoryInput>;
-};
+}
 
-
-export type MutationCreateItemArgs = {
+export interface MutationCreateItemArgs {
   input?: InputMaybe<CreateItemInput>;
-};
+}
 
+export interface MutationDeleteCategoryArgs {
+  categoryId: Scalars["Int"]["input"];
+}
 
-export type MutationDeleteCategoryArgs = {
-  categoryId: Scalars['Int']['input'];
-};
+export interface MutationDeleteItemArgs {
+  itemId: Scalars["Int"]["input"];
+}
 
-
-export type MutationDeleteItemArgs = {
-  itemId: Scalars['Int']['input'];
-};
-
-export type Query = {
-  __typename?: 'Query';
+export interface Query {
+  __typename?: "Query";
   getCategories?: Maybe<Array<Category>>;
   getCategory?: Maybe<Category>;
-};
+}
 
-
-export type QueryGetCategoryArgs = {
-  categoryId: Scalars['Int']['input'];
-};
+export interface QueryGetCategoryArgs {
+  categoryId: Scalars["Int"]["input"];
+}
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
-
-export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+export interface ResolverWithResolve<TResult, TParent, TContext, TArgs> {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
+}
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
@@ -162,65 +156,63 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-
-
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
   Category: ResolverTypeWrapper<Category>;
   CreateCategoryInput: CreateCategoryInput;
   CreateItemInput: CreateItemInput;
-  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
-  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  Float: ResolverTypeWrapper<Scalars["Float"]["output"]>;
+  Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   Item: ResolverTypeWrapper<Item>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars['String']['output']>;
+  String: ResolverTypeWrapper<Scalars["String"]["output"]>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Boolean: Scalars['Boolean']['output'];
+  Boolean: Scalars["Boolean"]["output"];
   Category: Category;
   CreateCategoryInput: CreateCategoryInput;
   CreateItemInput: CreateItemInput;
-  Float: Scalars['Float']['output'];
-  Int: Scalars['Int']['output'];
+  Float: Scalars["Float"]["output"];
+  Int: Scalars["Int"]["output"];
   Item: Item;
   Mutation: {};
   Query: {};
-  String: Scalars['String']['output'];
+  String: Scalars["String"]["output"];
 }>;
 
-export type CategoryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  itemCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  items?: Resolver<Maybe<Array<ResolversTypes['Item']>>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type CategoryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["Category"] = ResolversParentTypes["Category"]> = ResolversObject<{
+  id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  image_url?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  itemCount?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  items?: Resolver<Maybe<Array<ResolversTypes["Item"]>>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type ItemResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Item'] = ResolversParentTypes['Item']> = ResolversObject<{
-  categoryId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type ItemResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["Item"] = ResolversParentTypes["Item"]> = ResolversObject<{
+  categoryId?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  image_url?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type MutationResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, Partial<MutationCreateCategoryArgs>>;
-  createItem?: Resolver<Maybe<ResolversTypes['Item']>, ParentType, ContextType, Partial<MutationCreateItemArgs>>;
-  deleteCategory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'categoryId'>>;
-  deleteItem?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, 'itemId'>>;
+export type MutationResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]> = ResolversObject<{
+  createCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, Partial<MutationCreateCategoryArgs>>;
+  createItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, Partial<MutationCreateItemArgs>>;
+  deleteCategory?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, "categoryId">>;
+  deleteItem?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, "itemId">>;
 }>;
 
-export type QueryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  getCategories?: Resolver<Maybe<Array<ResolversTypes['Category']>>, ParentType, ContextType>;
-  getCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'categoryId'>>;
+export type QueryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]> = ResolversObject<{
+  getCategories?: Resolver<Maybe<Array<ResolversTypes["Category"]>>, ParentType, ContextType>;
+  getCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, RequireFields<QueryGetCategoryArgs, "categoryId">>;
 }>;
 
 export type Resolvers<ContextType = AppContext> = ResolversObject<{
@@ -229,4 +221,3 @@ export type Resolvers<ContextType = AppContext> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;
-

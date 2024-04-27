@@ -9,11 +9,11 @@ import { resolver } from "./schema/resolver";
 import isDev from "./utils/isDev";
 
 import supertokens from "supertokens-node";
-import Session from "supertokens-node/recipe/session";
-import EmailPassword from "supertokens-node/recipe/emailpassword";
 import { middleware } from "supertokens-node/framework/express";
 import { errorHandler } from "supertokens-node/framework/express";
 import Dashboard from "supertokens-node/recipe/dashboard";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
+import Session from "supertokens-node/recipe/session";
 
 supertokens.init({
   framework: "express",
@@ -48,7 +48,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(middleware());
-app.use(errorHandler())
+app.use(errorHandler());
 
 const PORT = process.env.PORT || 8080;
 

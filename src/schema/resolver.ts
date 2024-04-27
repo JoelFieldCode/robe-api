@@ -1,7 +1,7 @@
+import Session from "supertokens-node/recipe/session";
 import { prisma } from "../database/prismaClient";
 import { Category, Resolvers } from "../gql/server/resolvers-types";
 import { getUserCategory } from "../services/category";
-import Session from "supertokens-node/recipe/session";
 
 /*
   TODO swap all GQL types to camel case
