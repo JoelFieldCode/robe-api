@@ -18,15 +18,16 @@ import Dashboard from "supertokens-node/recipe/dashboard";
 supertokens.init({
   framework: "express",
   supertokens: {
-    connectionURI: "https://st-dev-c1c02010-0485-11ef-a00e-2b71757e7ede.aws.supertokens.io",
-    apiKey: "ZYIlidPvYMmPIIRq5qJNW0=mwz",
+    // these ended up in source control... can we change the api key?
+    connectionURI: process.env.SUPERTOKENS_URL,
+    apiKey: process.env.SUPERTOKENS_API_KEY
   },
   // TODO from ENV
   appInfo: {
     // learn more about this on https://supertokens.com/docs/session/appinfo
     appName: "Robe",
-    apiDomain: "http://localhost:8080",
-    websiteDomain: "http://localhost:3000",
+    apiDomain: process.env.ROBE_API_URL,
+    websiteDomain: process.env.ROBE_UI,
     apiBasePath: "/auth",
     websiteBasePath: "/auth",
   },
@@ -42,7 +43,7 @@ dotenv.config();
 const app = express();
 app.use(json());
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3000/playground"],
+  origin: [process.env.ROBE_UI],
   allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
   credentials: true,
 }));
