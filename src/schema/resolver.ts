@@ -1,8 +1,8 @@
-import Session from "supertokens-node/recipe/session";
 import { v4 } from "uuid";
 import { prisma } from "../database/prismaClient";
 import { Category, Resolvers } from "../gql/server/resolvers-types";
 import { getUserCategory } from "../services/category";
+import { getUserSession } from "../utils/getUserSession";
 
 /*
   TODO swap all GQL types to camel case
@@ -10,8 +10,7 @@ import { getUserCategory } from "../services/category";
 export const resolver: Resolvers = {
   Query: {
     getCategories: async (_parent, _query, { req, res }) => {
-      const session = await Session.getSession(req, res);
-      const userId = session.getUserId();
+      const userId = await getUserSession(req, res);
 
       const categories = await prisma.category.findMany({
         include: { _count: { select: { items: true } } },
@@ -26,8 +25,7 @@ export const resolver: Resolvers = {
       }));
     },
     getCategory: async (_parent, { categoryId }, { req, res }) => {
-      const session = await Session.getSession(req, res);
-      const userId = session.getUserId();
+      const userId = await getUserSession(req, res);
 
       const { _count, ...rest } = await prisma.category.findFirstOrThrow({
         include: { _count: { select: { items: true } } },
@@ -55,7 +53,7 @@ export const resolver: Resolvers = {
       Should rate limit this mutation too.. but since you can't sign up yet it's ok.
     */
     uploadImage: async (_parent, { image }, { req, res }) => {
-      await Session.getSession(req, res);
+      await getUserSession(req, res);
       // TODO we aren't really converting it to webp yet
       const path = `images/${v4()}.webp`;
       const uploadFileUrl = new URL(
@@ -86,8 +84,7 @@ export const resolver: Resolvers = {
     },
     createCategory: async (_parent, { input }, { req, res }) => {
       const { name, image_url } = input;
-      const session = await Session.getSession(req, res);
-      const userId = session.getUserId();
+      const userId = await getUserSession(req, res);
       const category = await prisma.category.create({
         data: { name, image_url, user_id: userId, },
       });
@@ -100,8 +97,7 @@ export const resolver: Resolvers = {
     },
     createItem: async (_parent, { input }, { req, res }) => {
       const { name, image_url, url, price, categoryId } = input;
-      const session = await Session.getSession(req, res);
-      const userId = session.getUserId();
+      const userId = await getUserSession(req, res);
       const category = await getUserCategory(userId, categoryId);
 
       return await prisma.item.create({
@@ -115,9 +111,8 @@ export const resolver: Resolvers = {
         },
       });
     },
-    deleteCategory: async (parent, { categoryId }, { req, res }) => {
-      const session = await Session.getSession(req, res);
-      const userId = session.getUserId();
+    deleteCategory: async (_parent, { categoryId }, { req, res }) => {
+      const userId = await getUserSession(req, res);
       const category = await getUserCategory(userId, categoryId);
       await prisma.category.delete({
         where: {
@@ -127,8 +122,7 @@ export const resolver: Resolvers = {
       return "Success";
     },
     deleteItem: async (_parent, { itemId }, { req, res }) => {
-      const session = await Session.getSession(req, res);
-      const userId = session.getUserId();
+      const userId = await getUserSession(req, res);
       // user id matches item, allow deletion
       await prisma.item.findFirstOrThrow({
         where: { id: itemId, user_id: userId, },
