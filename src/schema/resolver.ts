@@ -51,8 +51,12 @@ export const resolver: Resolvers = {
     },
   },
   Mutation: {
-    uploadImage: async (_parent, { image }) => {
-      // we aren't really converting it to webp yet
+    /*
+      Should rate limit this mutationtoo.. but since you can't sign up yet it's ok.
+    */
+    uploadImage: async (_parent, { image }, { req, res }) => {
+      await Session.getSession(req, res);
+      // TODO we aren't really converting it to webp yet
       const path = `images/${v4()}.webp`
       const uploadFileUrl = new URL(
         `/${process.env.BUNNYCDN_STORAGE_ZONE}/${path}`,
