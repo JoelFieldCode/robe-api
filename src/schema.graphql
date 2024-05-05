@@ -1,3 +1,5 @@
+scalar File
+
 input CreateCategoryInput {
   name: String!
   image_url: String
@@ -36,6 +38,7 @@ type Query {
 type Mutation {
   createCategory(input: CreateCategoryInput): Category
   createItem(input: CreateItemInput): Item
+  uploadImage(image: File!): String!
   deleteCategory(categoryId: Int!): String
   deleteItem(itemId: Int!): String
 }

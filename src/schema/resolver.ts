@@ -2,6 +2,7 @@ import Session from "supertokens-node/recipe/session";
 import { prisma } from "../database/prismaClient";
 import { Category, Resolvers } from "../gql/server/resolvers-types";
 import { getUserCategory } from "../services/category";
+import { v4 } from 'uuid';
 
 /*
   TODO swap all GQL types to camel case
@@ -50,6 +51,35 @@ export const resolver: Resolvers = {
     },
   },
   Mutation: {
+    uploadImage: async (_parent, { image }) => {
+      // we aren't really converting it to webp yet
+      const path = `images/${v4()}.webp`
+      const uploadFileUrl = new URL(
+        `/${process.env.BUNNYCDN_STORAGE_ZONE}/${path}`,
+        `https://${process.env.BUNNY_STORAGE_API_HOST}`,
+      );
+
+      try {
+        const fileArrayBuffer = await image.arrayBuffer()
+        const buffer = Buffer.from(fileArrayBuffer)
+        const res = await fetch(uploadFileUrl, {
+          method: "PUT",
+          headers: {
+            AccessKey: process.env.BUNNYCDN_API_KEY,
+            "Content-Type": "application/octet-stream",
+          },
+          body: buffer,
+        });
+
+        if (!res.ok) {
+          throw new Error('File upload failed')
+        }
+        return `${process.env.BUNNYCDN_HOST}/${path}`
+      } catch (err) {
+        throw new Error(err)
+      }
+
+    },
     createCategory: async (_parent, { input }, { req, res }) => {
       const { name, image_url } = input;
       const session = await Session.getSession(req, res);
