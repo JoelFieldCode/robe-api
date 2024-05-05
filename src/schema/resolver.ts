@@ -52,7 +52,7 @@ export const resolver: Resolvers = {
   },
   Mutation: {
     /*
-      Should rate limit this mutationtoo.. but since you can't sign up yet it's ok.
+      Should rate limit this mutation too.. but since you can't sign up yet it's ok.
     */
     uploadImage: async (_parent, { image }, { req, res }) => {
       await Session.getSession(req, res);
