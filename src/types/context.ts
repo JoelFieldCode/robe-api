@@ -4,7 +4,7 @@ export interface Context {
     user_id: string;
 }
 
-type AppRequest = Request & {
+export type AppRequest = Request & {
     context: Context;
 };
 

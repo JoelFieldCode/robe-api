@@ -1,5 +1,8 @@
 overwrite: true
 schema: ./src/schema.graphql
+config:
+  declarationKind:
+    input: "class"
 generates:
   ./src/gql/server/resolvers-types.ts:
     config:
