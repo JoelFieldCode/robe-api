@@ -17,6 +17,13 @@ export const getUserSession = async (req: AppRequest, res: Response) => {
                     http: { status: err.type === Session.Error.INVALID_CLAIMS ? 403 : 401 },
                 },
             });
+        } else {
+            throw new GraphQLError("Unexpected Error", {
+                extensions: {
+                    code: "UNEXPECTED_ERROR",
+                    http: { status: 500 },
+                },
+            });
         }
     }
 };
