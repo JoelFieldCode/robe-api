@@ -33,17 +33,17 @@ export interface Category {
   name: Scalars["String"]["output"];
 }
 
-export interface CreateCategoryInput {
-  image_url?: InputMaybe<Scalars["String"]["input"]>;
-  name: Scalars["String"]["input"];
+export class CreateCategoryInput {
+  public image_url?: InputMaybe<Scalars["String"]["input"]>;
+  public name: Scalars["String"]["input"];
 }
 
-export interface CreateItemInput {
-  categoryId: Scalars["Int"]["input"];
-  image_url?: InputMaybe<Scalars["String"]["input"]>;
-  name: Scalars["String"]["input"];
-  price: Scalars["Float"]["input"];
-  url: Scalars["String"]["input"];
+export class CreateItemInput {
+  public categoryId: Scalars["Int"]["input"];
+  public image_url?: InputMaybe<Scalars["String"]["input"]>;
+  public name: Scalars["String"]["input"];
+  public price: Scalars["Float"]["input"];
+  public url: Scalars["String"]["input"];
 }
 
 export interface Item {
