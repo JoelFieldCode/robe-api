@@ -18,7 +18,9 @@
     "codegen": "graphql-codegen"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node src/prisma/seed.ts",
+    "schema": "src/prisma/schema.prisma",
+    "migrations": "src/prisma/migrations"
   },
   "keywords": [],
   "author": "",
