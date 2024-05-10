@@ -73,7 +73,7 @@ export const resolver: Resolvers = {
         const bunnyUploadFileRes = await fetch(uploadFileUrl, {
           method: "PUT",
           headers: {
-            AccessKey: process.env.BUNNYCDN_API_KEY,
+            "AccessKey": process.env.BUNNYCDN_API_KEY,
             "Content-Type": "application/octet-stream",
           },
           body: buffer,
