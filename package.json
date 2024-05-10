@@ -13,7 +13,7 @@
     "test": "jest --runInBand",
     "test:watch": "jest --runInBand --watch",
     "migrate": "npx prisma migrate dev && npx prisma generate",
-    "migrate:prod": "npx prisma migrate deploy && npx prisma generate",
+    "migrate:prod": "npx prisma migrate deploy",
     "db:push": "npx prisma db push",
     "codegen": "graphql-codegen"
   },
