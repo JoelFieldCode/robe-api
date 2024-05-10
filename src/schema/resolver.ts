@@ -15,7 +15,10 @@ export const resolver: Resolvers = {
       const categories = await prisma.category.findMany({
         include: { _count: { select: { items: true } } },
         where: {
-          user_id: userId
+          user_id: userId,
+        },
+        orderBy: {
+          updated_at: "desc",
         },
       });
 
@@ -45,7 +48,10 @@ export const resolver: Resolvers = {
     // we should validate to make sure you can't do this
     items: async (category: Category) => {
       // don't need to check user_id here as this should already be checked by parent resolver
-      return await prisma.item.findMany({ where: { categoryId: category.id } });
+      return await prisma.item.findMany({
+        where: { categoryId: category.id },
+        orderBy: { updated_at: "desc" },
+      });
     },
   },
   Mutation: {
@@ -58,7 +64,7 @@ export const resolver: Resolvers = {
       const path = `images/${v4()}.webp`;
       const uploadFileUrl = new URL(
         `/${process.env.BUNNYCDN_STORAGE_ZONE}/${path}`,
-        `https://${process.env.BUNNY_STORAGE_API_HOST}`,
+        `https://${process.env.BUNNY_STORAGE_API_HOST}`
       );
 
       try {
@@ -80,13 +86,12 @@ export const resolver: Resolvers = {
       } catch (err) {
         throw new Error(err);
       }
-
     },
     createCategory: async (_parent, { input }, { req, res }) => {
       const { name, image_url } = input;
       const userId = await getUserSession(req, res);
       const category = await prisma.category.create({
-        data: { name, image_url, user_id: userId, },
+        data: { name, image_url, user_id: userId },
       });
 
       return {
@@ -99,6 +104,12 @@ export const resolver: Resolvers = {
       const { name, image_url, url, price, categoryId } = input;
       const userId = await getUserSession(req, res);
       const category = await getUserCategory(userId, categoryId);
+
+      // bump category timestamp when adding an item
+      await prisma.category.update({
+        where: { id: category.id },
+        data: { updated_at: new Date() },
+      });
 
       return await prisma.item.create({
         data: {
@@ -125,7 +136,7 @@ export const resolver: Resolvers = {
       const userId = await getUserSession(req, res);
       // user id matches item, allow deletion
       await prisma.item.findFirstOrThrow({
-        where: { id: itemId, user_id: userId, },
+        where: { id: itemId, user_id: userId },
       });
       await prisma.item.delete({
         where: {
