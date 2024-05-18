@@ -7,17 +7,17 @@ import { getUserCategory } from "../services/category";
 import { getUserSession } from "../utils/getUserSession";
 
 const createItemSchema = z.object({
-  name: z.string().max(100, { message: 'Item name must not be longer than 100 characters' }),
+  name: z.string().max(100, { message: "Item name must not be longer than 100 characters" }),
   price: z.number(),
   image_url: z.string().url().optional().nullable(),
   url: z.string().url(),
   categoryId: z.number(),
-})
+});
 
 const createCategorySchema = z.object({
-  name: z.string().max(50, { message: 'Category name must not be longer than 100 characters' }),
+  name: z.string().max(50, { message: "Category name must not be longer than 100 characters" }),
   image_url: z.string().url().optional().nullable(),
-})
+});
 
 /*
   TODO swap all GQL types to camel case
@@ -104,7 +104,7 @@ export const resolver: Resolvers = {
     },
     createCategory: async (_parent, { input }, { req, res }) => {
       try {
-        const { name, image_url } = createCategorySchema.parse(input)
+        const { name, image_url } = createCategorySchema.parse(input);
         const userId = await getUserSession(req, res);
         const category = await prisma.category.create({
           data: { name, image_url, user_id: userId },
@@ -117,18 +117,18 @@ export const resolver: Resolvers = {
         };
       } catch (err) {
         if (err instanceof ZodError) {
-          const errorMeta = err.errors[0]
+          const errorMeta = err.errors[0];
           return Promise.reject(
             new GraphQLError(`${errorMeta.message}`)
-          )
+          );
         } else {
-          return Promise.reject(err)
+          return Promise.reject(err);
         }
       }
     },
     createItem: async (_parent, { input }, { req, res }) => {
       try {
-        const { name, image_url, url, price, categoryId } = createItemSchema.parse(input)
+        const { name, image_url, url, price, categoryId } = createItemSchema.parse(input);
         const userId = await getUserSession(req, res);
         const category = await getUserCategory(userId, categoryId);
 
@@ -150,12 +150,12 @@ export const resolver: Resolvers = {
         });
       } catch (err) {
         if (err instanceof ZodError) {
-          const errorMeta = err.errors[0]
+          const errorMeta = err.errors[0];
           return Promise.reject(
             new GraphQLError(`${errorMeta.message}`)
-          )
+          );
         } else {
-          return Promise.reject(err)
+          return Promise.reject(err);
         }
       }
     },
