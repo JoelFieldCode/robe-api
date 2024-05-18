@@ -6,17 +6,18 @@ import { Category, Resolvers } from "../gql/server/resolvers-types";
 import { getUserCategory } from "../services/category";
 import { getUserSession } from "../utils/getUserSession";
 
-// first step is to just match the prisma schema at least.
 const createItemSchema = z.object({
-  name: z.string().max(100, { message: 'Name must not be longer than 100 characters' }),
+  name: z.string().max(100, { message: 'Item name must not be longer than 100 characters' }),
   price: z.number(),
-  // apply a max?
   image_url: z.string().url().optional().nullable(),
   url: z.string().url(),
   categoryId: z.number(),
 })
 
-// TODO createCategorySchema also
+const createCategorySchema = z.object({
+  name: z.string().max(50, { message: 'Category name must not be longer than 100 characters' }),
+  image_url: z.string().url().optional().nullable(),
+})
 
 /*
   TODO swap all GQL types to camel case
@@ -102,17 +103,28 @@ export const resolver: Resolvers = {
       }
     },
     createCategory: async (_parent, { input }, { req, res }) => {
-      const { name, image_url } = input;
-      const userId = await getUserSession(req, res);
-      const category = await prisma.category.create({
-        data: { name, image_url, user_id: userId },
-      });
+      try {
+        const { name, image_url } = createCategorySchema.parse(input)
+        const userId = await getUserSession(req, res);
+        const category = await prisma.category.create({
+          data: { name, image_url, user_id: userId },
+        });
 
-      return {
-        ...category,
-        // not possible to create an item without a category
-        itemCount: 0,
-      };
+        return {
+          ...category,
+          // not possible to create an item without a category
+          itemCount: 0,
+        };
+      } catch (err) {
+        if (err instanceof ZodError) {
+          const errorMeta = err.errors[0]
+          return Promise.reject(
+            new GraphQLError(`${errorMeta.message}`)
+          )
+        } else {
+          return Promise.reject(err)
+        }
+      }
     },
     createItem: async (_parent, { input }, { req, res }) => {
       try {
