@@ -133,9 +133,10 @@ export const resolver: Resolvers = {
         const category = await getUserCategory(userId, categoryId);
 
         // bump category timestamp when adding an item
+        // also update the latest image URL
         await prisma.category.update({
           where: { id: category.id },
-          data: { updated_at: new Date() },
+          data: { updated_at: new Date(), image_url },
         });
 
         return await prisma.item.create({
