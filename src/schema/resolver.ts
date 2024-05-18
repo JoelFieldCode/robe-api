@@ -1,8 +1,23 @@
+import { GraphQLError } from "graphql";
 import { v4 } from "uuid";
+import { z, ZodError } from "zod";
 import { prisma } from "../database/prismaClient";
 import { Category, Resolvers } from "../gql/server/resolvers-types";
 import { getUserCategory } from "../services/category";
 import { getUserSession } from "../utils/getUserSession";
+
+const createItemSchema = z.object({
+  name: z.string().max(100, { message: 'Item name must not be longer than 100 characters' }),
+  price: z.number(),
+  image_url: z.string().url().optional().nullable(),
+  url: z.string().url(),
+  categoryId: z.number(),
+})
+
+const createCategorySchema = z.object({
+  name: z.string().max(50, { message: 'Category name must not be longer than 100 characters' }),
+  image_url: z.string().url().optional().nullable(),
+})
 
 /*
   TODO swap all GQL types to camel case
@@ -88,39 +103,61 @@ export const resolver: Resolvers = {
       }
     },
     createCategory: async (_parent, { input }, { req, res }) => {
-      const { name, image_url } = input;
-      const userId = await getUserSession(req, res);
-      const category = await prisma.category.create({
-        data: { name, image_url, user_id: userId },
-      });
+      try {
+        const { name, image_url } = createCategorySchema.parse(input)
+        const userId = await getUserSession(req, res);
+        const category = await prisma.category.create({
+          data: { name, image_url, user_id: userId },
+        });
 
-      return {
-        ...category,
-        // not possible to create an item without a category
-        itemCount: 0,
-      };
+        return {
+          ...category,
+          // not possible to create an item without a category
+          itemCount: 0,
+        };
+      } catch (err) {
+        if (err instanceof ZodError) {
+          const errorMeta = err.errors[0]
+          return Promise.reject(
+            new GraphQLError(`${errorMeta.message}`)
+          )
+        } else {
+          return Promise.reject(err)
+        }
+      }
     },
     createItem: async (_parent, { input }, { req, res }) => {
-      const { name, image_url, url, price, categoryId } = input;
-      const userId = await getUserSession(req, res);
-      const category = await getUserCategory(userId, categoryId);
+      try {
+        const { name, image_url, url, price, categoryId } = createItemSchema.parse(input)
+        const userId = await getUserSession(req, res);
+        const category = await getUserCategory(userId, categoryId);
 
-      // bump category timestamp when adding an item
-      await prisma.category.update({
-        where: { id: category.id },
-        data: { updated_at: new Date() },
-      });
+        // bump category timestamp when adding an item
+        await prisma.category.update({
+          where: { id: category.id },
+          data: { updated_at: new Date() },
+        });
 
-      return await prisma.item.create({
-        data: {
-          categoryId: category.id,
-          name,
-          image_url,
-          url,
-          price,
-          user_id: userId,
-        },
-      });
+        return await prisma.item.create({
+          data: {
+            categoryId: category.id,
+            name,
+            image_url,
+            url,
+            price,
+            user_id: userId,
+          },
+        });
+      } catch (err) {
+        if (err instanceof ZodError) {
+          const errorMeta = err.errors[0]
+          return Promise.reject(
+            new GraphQLError(`${errorMeta.message}`)
+          )
+        } else {
+          return Promise.reject(err)
+        }
+      }
     },
     deleteCategory: async (_parent, { categoryId }, { req, res }) => {
       const userId = await getUserSession(req, res);
