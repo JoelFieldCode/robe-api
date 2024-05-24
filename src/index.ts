@@ -63,7 +63,7 @@ dotenv.config();
 const app = express();
 app.use(json());
 app.use(cors({
-  origin: [process.env.ROBE_UI],
+  origin: [process.env.ROBE_UI, "http://localhost:3000"],
   allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
   credentials: true,
 }));
