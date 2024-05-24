@@ -29,7 +29,7 @@ supertokens.init({
     apiDomain: process.env.ROBE_API_URL,
     origin: (input) => {
       if (input.request !== undefined) {
-        let origin = input.request.getHeaderValue("origin");
+        const origin = input.request.getHeaderValue("origin");
         if (origin === undefined) {
           // this means the client is in an iframe, it's a mobile app, or
           // there is a privacy setting on the frontend which doesn't send
@@ -46,7 +46,7 @@ supertokens.init({
       }
       // in case the origin is unknown or not set, we return a default
       // value which will be used for this request.
-      return process.env.ROBE_UI
+      return process.env.ROBE_UI;
     },
     apiBasePath: "/auth",
     websiteBasePath: "/auth",
