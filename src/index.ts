@@ -27,7 +27,27 @@ supertokens.init({
     // learn more about this on https://supertokens.com/docs/session/appinfo
     appName: "Robe",
     apiDomain: process.env.ROBE_API_URL,
-    websiteDomain: process.env.ROBE_UI,
+    origin: (input) => {
+      if (input.request !== undefined) {
+        let origin = input.request.getHeaderValue("origin");
+        if (origin === undefined) {
+          // this means the client is in an iframe, it's a mobile app, or
+          // there is a privacy setting on the frontend which doesn't send
+          // the origin
+        } else {
+          if (origin === process.env.ROBE_UI) {
+            // query from the configured site
+            return process.env.ROBE_UI;
+          } else if (origin === "http://localhost:3000") {
+            // query from local development
+            return "http://localhost:3000";
+          }
+        }
+      }
+      // in case the origin is unknown or not set, we return a default
+      // value which will be used for this request.
+      return process.env.ROBE_UI
+    },
     apiBasePath: "/auth",
     websiteBasePath: "/auth",
   },
