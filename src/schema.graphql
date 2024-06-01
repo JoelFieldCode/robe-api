@@ -48,6 +48,7 @@ type Item {
 type Query {
   getCategories: [Category!]
   getCategory(categoryId: Int!): Category
+  getItem(itemId: Int!): Item
 }
 
 type Mutation {

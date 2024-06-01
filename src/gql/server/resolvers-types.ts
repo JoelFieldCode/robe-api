@@ -107,11 +107,17 @@ export type Query = {
   __typename?: 'Query';
   getCategories?: Maybe<Array<Category>>;
   getCategory?: Maybe<Category>;
+  getItem?: Maybe<Item>;
 };
 
 
 export type QueryGetCategoryArgs = {
   categoryId: Scalars['Int']['input'];
+};
+
+
+export type QueryGetItemArgs = {
+  itemId: Scalars['Int']['input'];
 };
 
 export class UpdateCategoryInput {
@@ -268,6 +274,7 @@ export type MutationResolvers<ContextType = AppContext, ParentType extends Resol
 export type QueryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getCategories?: Resolver<Maybe<Array<ResolversTypes['Category']>>, ParentType, ContextType>;
   getCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryGetCategoryArgs, 'categoryId'>>;
+  getItem?: Resolver<Maybe<ResolversTypes['Item']>, ParentType, ContextType, RequireFields<QueryGetItemArgs, 'itemId'>>;
 }>;
 
 export type Resolvers<ContextType = AppContext> = ResolversObject<{

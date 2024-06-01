@@ -64,6 +64,16 @@ export const resolver: Resolvers = {
         itemCount: _count.items,
       };
     },
+    getItem: async (_parent, { itemId }, { req, res }) => {
+      const userId = await getUserSession(req, res);
+
+      return await prisma.item.findFirstOrThrow({
+        where: {
+          id: itemId,
+          user_id: userId,
+        },
+      });
+    },
   },
   Category: {
     // this is technically a N+1 bug but only if FE requests all categories with all items
