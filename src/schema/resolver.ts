@@ -16,7 +16,7 @@ const createItemSchema = z.object({
 
 const updateItemSchema = createItemSchema.extend({
   id: z.number()
-})
+});
 
 const createCategorySchema = z.object({
   name: z.string().max(50, { message: "Category name must not be longer than 100 characters" }),
