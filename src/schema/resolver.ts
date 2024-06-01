@@ -16,7 +16,11 @@ const createItemSchema = z.object({
 
 const createCategorySchema = z.object({
   name: z.string().max(50, { message: "Category name must not be longer than 100 characters" }),
-  image_url: z.string().url().optional().nullable(),
+});
+
+const updateCategorySchema = z.object({
+  name: z.string().max(50, { message: "Category name must not be longer than 100 characters" }),
+  id: z.number()
 });
 
 /*
@@ -104,16 +108,42 @@ export const resolver: Resolvers = {
     },
     createCategory: async (_parent, { input }, { req, res }) => {
       try {
-        const { name, image_url } = createCategorySchema.parse(input);
+        const { name } = createCategorySchema.parse(input);
         const userId = await getUserSession(req, res);
         const category = await prisma.category.create({
-          data: { name, image_url, user_id: userId },
+          data: { name, user_id: userId },
         });
 
         return {
           ...category,
           // not possible to create an item without a category
           itemCount: 0,
+        };
+      } catch (err) {
+        if (err instanceof ZodError) {
+          const errorMeta = err.errors[0];
+          return Promise.reject(
+            new GraphQLError(`${errorMeta.message}`)
+          );
+        } else {
+          return Promise.reject(err);
+        }
+      }
+    },
+    updateCategory: async (_parent, { input }, { req, res }) => {
+      try {
+        const { name, id, } = updateCategorySchema.parse(input);
+        const userId = await getUserSession(req, res);
+        await getUserCategory(userId, id);
+        const { _count, ...category } = await prisma.category.update({
+          where: { id },
+          data: { name },
+          include: { _count: { select: { items: true } } },
+        });
+
+        return {
+          ...category,
+          itemCount: _count.items,
         };
       } catch (err) {
         if (err instanceof ZodError) {
