@@ -53,9 +53,9 @@ type Query {
 
 type Mutation {
   createCategory(input: CreateCategoryInput): Category
-  updateCategory(input: UpdateCategoryInput): Category
+  updateCategory(input: UpdateCategoryInput!): Category
   createItem(input: CreateItemInput): Item
-  updateItem(input: UpdateItemInput): Item
+  updateItem(input: UpdateItemInput!): Item
   uploadImage(image: File!): String!
   deleteCategory(categoryId: Int!): String
   deleteItem(itemId: Int!): String

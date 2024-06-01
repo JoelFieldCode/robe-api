@@ -85,11 +85,11 @@ export interface MutationDeleteItemArgs {
 }
 
 export interface MutationUpdateCategoryArgs {
-  input?: InputMaybe<UpdateCategoryInput>;
+  input: UpdateCategoryInput;
 }
 
 export interface MutationUpdateItemArgs {
-  input?: InputMaybe<UpdateItemInput>;
+  input: UpdateItemInput;
 }
 
 export interface MutationUploadImageArgs {
@@ -254,8 +254,8 @@ export type MutationResolvers<ContextType = AppContext, ParentType extends Resol
   createItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, Partial<MutationCreateItemArgs>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, "categoryId">>;
   deleteItem?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, "itemId">>;
-  updateCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, Partial<MutationUpdateCategoryArgs>>;
-  updateItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, Partial<MutationUpdateItemArgs>>;
+  updateCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, "input">>;
+  updateItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, RequireFields<MutationUpdateItemArgs, "input">>;
   uploadImage?: Resolver<ResolversTypes["String"], ParentType, ContextType, RequireFields<MutationUploadImageArgs, "image">>;
 }>;
 
