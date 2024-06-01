@@ -3,6 +3,12 @@ scalar File
 input CreateCategoryInput {
   name: String!
   image_url: String
+    @deprecated(reason: "Item image is now set as category image")
+}
+
+input UpdateCategoryInput {
+  name: String!
+  id: Int!
 }
 
 input CreateItemInput {
@@ -11,6 +17,15 @@ input CreateItemInput {
   url: String!
   price: Float!
   categoryId: Int!
+}
+
+input UpdateItemInput {
+  name: String!
+  image_url: String
+  url: String!
+  price: Float!
+  categoryId: Int!
+  id: Int!
 }
 
 type Category {
@@ -33,11 +48,14 @@ type Item {
 type Query {
   getCategories: [Category!]
   getCategory(categoryId: Int!): Category
+  getItem(itemId: Int!): Item
 }
 
 type Mutation {
   createCategory(input: CreateCategoryInput): Category
+  updateCategory(input: UpdateCategoryInput!): Category
   createItem(input: CreateItemInput): Item
+  updateItem(input: UpdateItemInput!): Item
   uploadImage(image: File!): String!
   deleteCategory(categoryId: Int!): String
   deleteItem(itemId: Int!): String

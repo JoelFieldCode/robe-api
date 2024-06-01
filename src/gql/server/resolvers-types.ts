@@ -34,6 +34,7 @@ export interface Category {
 }
 
 export class CreateCategoryInput {
+  /** @deprecated Item image is now set as category image */
   public image_url?: InputMaybe<Scalars["String"]["input"]>;
   public name: Scalars["String"]["input"];
 }
@@ -62,6 +63,8 @@ export interface Mutation {
   createItem?: Maybe<Item>;
   deleteCategory?: Maybe<Scalars["String"]["output"]>;
   deleteItem?: Maybe<Scalars["String"]["output"]>;
+  updateCategory?: Maybe<Category>;
+  updateItem?: Maybe<Item>;
   uploadImage: Scalars["String"]["output"];
 }
 
@@ -81,6 +84,14 @@ export interface MutationDeleteItemArgs {
   itemId: Scalars["Int"]["input"];
 }
 
+export interface MutationUpdateCategoryArgs {
+  input: UpdateCategoryInput;
+}
+
+export interface MutationUpdateItemArgs {
+  input: UpdateItemInput;
+}
+
 export interface MutationUploadImageArgs {
   image: Scalars["File"]["input"];
 }
@@ -89,10 +100,29 @@ export interface Query {
   __typename?: "Query";
   getCategories?: Maybe<Array<Category>>;
   getCategory?: Maybe<Category>;
+  getItem?: Maybe<Item>;
 }
 
 export interface QueryGetCategoryArgs {
   categoryId: Scalars["Int"]["input"];
+}
+
+export interface QueryGetItemArgs {
+  itemId: Scalars["Int"]["input"];
+}
+
+export class UpdateCategoryInput {
+  public id: Scalars["Int"]["input"];
+  public name: Scalars["String"]["input"];
+}
+
+export class UpdateItemInput {
+  public categoryId: Scalars["Int"]["input"];
+  public id: Scalars["Int"]["input"];
+  public image_url?: InputMaybe<Scalars["String"]["input"]>;
+  public name: Scalars["String"]["input"];
+  public price: Scalars["Float"]["input"];
+  public url: Scalars["String"]["input"];
 }
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -175,6 +205,8 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
+  UpdateCategoryInput: UpdateCategoryInput;
+  UpdateItemInput: UpdateItemInput;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -190,6 +222,8 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   Query: {};
   String: Scalars["String"]["output"];
+  UpdateCategoryInput: UpdateCategoryInput;
+  UpdateItemInput: UpdateItemInput;
 }>;
 
 export type CategoryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["Category"] = ResolversParentTypes["Category"]> = ResolversObject<{
@@ -220,12 +254,15 @@ export type MutationResolvers<ContextType = AppContext, ParentType extends Resol
   createItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, Partial<MutationCreateItemArgs>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, "categoryId">>;
   deleteItem?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, "itemId">>;
+  updateCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, "input">>;
+  updateItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, RequireFields<MutationUpdateItemArgs, "input">>;
   uploadImage?: Resolver<ResolversTypes["String"], ParentType, ContextType, RequireFields<MutationUploadImageArgs, "image">>;
 }>;
 
 export type QueryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]> = ResolversObject<{
   getCategories?: Resolver<Maybe<Array<ResolversTypes["Category"]>>, ParentType, ContextType>;
   getCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, RequireFields<QueryGetCategoryArgs, "categoryId">>;
+  getItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, RequireFields<QueryGetItemArgs, "itemId">>;
 }>;
 
 export type Resolvers<ContextType = AppContext> = ResolversObject<{
