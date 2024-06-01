@@ -64,6 +64,7 @@ export type Mutation = {
   deleteCategory?: Maybe<Scalars['String']['output']>;
   deleteItem?: Maybe<Scalars['String']['output']>;
   updateCategory?: Maybe<Category>;
+  updateItem?: Maybe<Item>;
   uploadImage: Scalars['String']['output'];
 };
 
@@ -93,6 +94,11 @@ export type MutationUpdateCategoryArgs = {
 };
 
 
+export type MutationUpdateItemArgs = {
+  input?: InputMaybe<UpdateItemInput>;
+};
+
+
 export type MutationUploadImageArgs = {
   image: Scalars['File']['input'];
 };
@@ -111,6 +117,15 @@ export type QueryGetCategoryArgs = {
 export class UpdateCategoryInput {
   id: Scalars['Int']['input'];
   name: Scalars['String']['input'];
+};
+
+export class UpdateItemInput {
+  categoryId: Scalars['Int']['input'];
+  id: Scalars['Int']['input'];
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  price: Scalars['Float']['input'];
+  url: Scalars['String']['input'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -197,6 +212,7 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   UpdateCategoryInput: UpdateCategoryInput;
+  UpdateItemInput: UpdateItemInput;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -213,6 +229,7 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   String: Scalars['String']['output'];
   UpdateCategoryInput: UpdateCategoryInput;
+  UpdateItemInput: UpdateItemInput;
 }>;
 
 export type CategoryResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
@@ -244,6 +261,7 @@ export type MutationResolvers<ContextType = AppContext, ParentType extends Resol
   deleteCategory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'categoryId'>>;
   deleteItem?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, 'itemId'>>;
   updateCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, Partial<MutationUpdateCategoryArgs>>;
+  updateItem?: Resolver<Maybe<ResolversTypes['Item']>, ParentType, ContextType, Partial<MutationUpdateItemArgs>>;
   uploadImage?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUploadImageArgs, 'image'>>;
 }>;
 

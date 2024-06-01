@@ -19,6 +19,15 @@ input CreateItemInput {
   categoryId: Int!
 }
 
+input UpdateItemInput {
+  name: String!
+  image_url: String
+  url: String!
+  price: Float!
+  categoryId: Int!
+  id: Int!
+}
+
 type Category {
   name: String!
   id: Int!
@@ -45,6 +54,7 @@ type Mutation {
   createCategory(input: CreateCategoryInput): Category
   updateCategory(input: UpdateCategoryInput): Category
   createItem(input: CreateItemInput): Item
+  updateItem(input: UpdateItemInput): Item
   uploadImage(image: File!): String!
   deleteCategory(categoryId: Int!): String
   deleteItem(itemId: Int!): String

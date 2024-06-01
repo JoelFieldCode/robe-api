@@ -14,12 +14,15 @@ const createItemSchema = z.object({
   categoryId: z.number(),
 });
 
+const updateItemSchema = createItemSchema.extend({
+  id: z.number()
+})
+
 const createCategorySchema = z.object({
   name: z.string().max(50, { message: "Category name must not be longer than 100 characters" }),
 });
 
-const updateCategorySchema = z.object({
-  name: z.string().max(50, { message: "Category name must not be longer than 100 characters" }),
+const updateCategorySchema = createCategorySchema.extend({
   id: z.number()
 });
 
@@ -170,6 +173,43 @@ export const resolver: Resolvers = {
         });
 
         return await prisma.item.create({
+          data: {
+            categoryId: category.id,
+            name,
+            image_url,
+            url,
+            price,
+            user_id: userId,
+          },
+        });
+      } catch (err) {
+        if (err instanceof ZodError) {
+          const errorMeta = err.errors[0];
+          return Promise.reject(
+            new GraphQLError(`${errorMeta.message}`)
+          );
+        } else {
+          return Promise.reject(err);
+        }
+      }
+    },
+    updateItem: async (_parent, { input }, { req, res }) => {
+      try {
+        const { name, id, image_url, url, price, categoryId } = updateItemSchema.parse(input);
+        const userId = await getUserSession(req, res);
+        const category = await getUserCategory(userId, categoryId);
+
+        // bump category timestamp when adding an item
+        // also update the latest image URL
+        await prisma.category.update({
+          where: { id: category.id },
+          data: { updated_at: new Date(), image_url },
+        });
+
+        return await prisma.item.update({
+          where: {
+            id
+          },
           data: {
             categoryId: category.id,
             name,
