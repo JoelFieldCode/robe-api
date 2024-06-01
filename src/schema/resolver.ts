@@ -76,12 +76,9 @@ export const resolver: Resolvers = {
     },
   },
   Category: {
-    // this is technically a N+1 bug but only if FE requests all categories with all items
-    // we should validate to make sure you can't do this
     items: async (category: Category) => {
       // don't need to check user_id here as this should already be checked by parent resolver
-      return await prisma.item.findMany({
-        where: { categoryId: category.id },
+      return await prisma.category.findUnique({ where: { id: category.id } }).items({
         orderBy: { updated_at: "desc" },
       });
     },
