@@ -69,11 +69,11 @@ export interface Mutation {
 }
 
 export interface MutationCreateCategoryArgs {
-  input: CreateCategoryInput;
+  input?: InputMaybe<CreateCategoryInput>;
 }
 
 export interface MutationCreateItemArgs {
-  input: CreateItemInput;
+  input?: InputMaybe<CreateItemInput>;
 }
 
 export interface MutationDeleteCategoryArgs {
@@ -85,11 +85,11 @@ export interface MutationDeleteItemArgs {
 }
 
 export interface MutationUpdateCategoryArgs {
-  input: UpdateCategoryInput;
+  input?: InputMaybe<UpdateCategoryInput>;
 }
 
 export interface MutationUpdateItemArgs {
-  input: UpdateItemInput;
+  input?: InputMaybe<UpdateItemInput>;
 }
 
 export interface MutationUploadImageArgs {
@@ -250,12 +250,12 @@ export type ItemResolvers<ContextType = AppContext, ParentType extends Resolvers
 }>;
 
 export type MutationResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]> = ResolversObject<{
-  createCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, "input">>;
-  createItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, RequireFields<MutationCreateItemArgs, "input">>;
+  createCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, Partial<MutationCreateCategoryArgs>>;
+  createItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, Partial<MutationCreateItemArgs>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, "categoryId">>;
   deleteItem?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType, RequireFields<MutationDeleteItemArgs, "itemId">>;
-  updateCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, "input">>;
-  updateItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, RequireFields<MutationUpdateItemArgs, "input">>;
+  updateCategory?: Resolver<Maybe<ResolversTypes["Category"]>, ParentType, ContextType, Partial<MutationUpdateCategoryArgs>>;
+  updateItem?: Resolver<Maybe<ResolversTypes["Item"]>, ParentType, ContextType, Partial<MutationUpdateItemArgs>>;
   uploadImage?: Resolver<ResolversTypes["String"], ParentType, ContextType, RequireFields<MutationUploadImageArgs, "image">>;
 }>;
 
