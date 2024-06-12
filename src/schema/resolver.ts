@@ -3,11 +3,16 @@ import { v4 } from "uuid";
 import { z, ZodError } from "zod";
 import { prisma } from "../database/prismaClient";
 import { Category, Resolvers } from "../gql/server/resolvers-types";
-import { getUserCategory } from "../services/category";
+import {
+  assertUserOwnsCategory,
+  assertUserOwnsItem,
+} from "../services/category";
 import { getUserSession } from "../utils/getUserSession";
 
 const createItemSchema = z.object({
-  name: z.string().max(100, { message: "Item name must not be longer than 100 characters" }),
+  name: z
+    .string()
+    .max(100, { message: "Item name must not be longer than 100 characters" }),
   price: z.number(),
   image_url: z.string().url().optional().nullable(),
   url: z.string().url(),
@@ -15,15 +20,19 @@ const createItemSchema = z.object({
 });
 
 const updateItemSchema = createItemSchema.extend({
-  id: z.number()
+  id: z.number(),
 });
 
 const createCategorySchema = z.object({
-  name: z.string().max(50, { message: "Category name must not be longer than 100 characters" }),
+  name: z
+    .string()
+    .max(50, {
+      message: "Category name must not be longer than 100 characters",
+    }),
 });
 
 const updateCategorySchema = createCategorySchema.extend({
-  id: z.number()
+  id: z.number(),
 });
 
 /*
@@ -32,17 +41,15 @@ const updateCategorySchema = createCategorySchema.extend({
 export const resolver: Resolvers = {
   Query: {
     getCategories: async (_parent, _query, { req, res }) => {
-      const userId = await getUserSession(req, res);
-
-      const categories = await prisma.category.findMany({
-        include: { _count: { select: { items: true } } },
-        where: {
-          user_id: userId,
-        },
-        orderBy: {
-          updated_at: "desc",
-        },
-      });
+      const user = await getUserSession(req, res);
+      const categories = await prisma.user
+        .findUnique({ where: { id: user.id } })
+        .categories({
+          include: { _count: { select: { items: true } } },
+          orderBy: {
+            updated_at: "desc",
+          },
+        });
 
       return categories.map(({ _count, ...rest }) => ({
         ...rest,
@@ -50,27 +57,29 @@ export const resolver: Resolvers = {
       }));
     },
     getCategory: async (_parent, { categoryId }, { req, res }) => {
-      const userId = await getUserSession(req, res);
+      const user = await getUserSession(req, res);
+      await assertUserOwnsCategory(user.id, categoryId);
 
-      const { _count, ...rest } = await prisma.category.findFirstOrThrow({
-        include: { _count: { select: { items: true } } },
-        where: {
-          id: categoryId,
-          user_id: userId,
-        },
-      });
+      const { _count, ...rest } =
+        await prisma.category.findUniqueOrThrow({
+          include: { _count: { select: { items: true } } },
+          where: {
+            id: categoryId,
+          },
+        });
+
       return {
         ...rest,
         itemCount: _count.items,
       };
     },
     getItem: async (_parent, { itemId }, { req, res }) => {
-      const userId = await getUserSession(req, res);
+      const user = await getUserSession(req, res);
+      await assertUserOwnsItem(user.id, itemId);
 
-      return await prisma.item.findFirstOrThrow({
+      return await prisma.item.findUniqueOrThrow({
         where: {
           id: itemId,
-          user_id: userId,
         },
       });
     },
@@ -78,9 +87,11 @@ export const resolver: Resolvers = {
   Category: {
     items: async (category: Category) => {
       // don't need to check user_id here as this should already be checked by parent resolver
-      return await prisma.category.findUnique({ where: { id: category.id } }).items({
-        orderBy: { updated_at: "desc" },
-      });
+      return await prisma.category
+        .findUnique({ where: { id: category.id } })
+        .items({
+          orderBy: { updated_at: "desc" },
+        });
     },
   },
   Mutation: {
@@ -102,7 +113,7 @@ export const resolver: Resolvers = {
         const bunnyUploadFileRes = await fetch(uploadFileUrl, {
           method: "PUT",
           headers: {
-            "AccessKey": process.env.BUNNYCDN_API_KEY,
+            AccessKey: process.env.BUNNYCDN_API_KEY,
             "Content-Type": "application/octet-stream",
           },
           body: buffer,
@@ -119,9 +130,9 @@ export const resolver: Resolvers = {
     createCategory: async (_parent, { input }, { req, res }) => {
       try {
         const { name } = createCategorySchema.parse(input);
-        const userId = await getUserSession(req, res);
+        const user = await getUserSession(req, res);
         const category = await prisma.category.create({
-          data: { name, user_id: userId, userId, },
+          data: { name, userId: user.id, },
         });
 
         return {
@@ -132,9 +143,7 @@ export const resolver: Resolvers = {
       } catch (err) {
         if (err instanceof ZodError) {
           const errorMeta = err.errors[0];
-          return Promise.reject(
-            new GraphQLError(`${errorMeta.message}`)
-          );
+          return Promise.reject(new GraphQLError(`${errorMeta.message}`));
         } else {
           return Promise.reject(err);
         }
@@ -142,9 +151,10 @@ export const resolver: Resolvers = {
     },
     updateCategory: async (_parent, { input }, { req, res }) => {
       try {
-        const { name, id, } = updateCategorySchema.parse(input);
-        const userId = await getUserSession(req, res);
-        await getUserCategory(userId, id);
+        const { name, id } = updateCategorySchema.parse(input);
+        const user = await getUserSession(req, res);
+        await assertUserOwnsCategory(user.id, id);
+
         const { _count, ...category } = await prisma.category.update({
           where: { id },
           data: { name },
@@ -158,9 +168,7 @@ export const resolver: Resolvers = {
       } catch (err) {
         if (err instanceof ZodError) {
           const errorMeta = err.errors[0];
-          return Promise.reject(
-            new GraphQLError(`${errorMeta.message}`)
-          );
+          return Promise.reject(new GraphQLError(`${errorMeta.message}`));
         } else {
           return Promise.reject(err);
         }
@@ -168,34 +176,32 @@ export const resolver: Resolvers = {
     },
     createItem: async (_parent, { input }, { req, res }) => {
       try {
-        const { name, image_url, url, price, categoryId } = createItemSchema.parse(input);
-        const userId = await getUserSession(req, res);
-        const category = await getUserCategory(userId, categoryId);
+        const { name, image_url, url, price, categoryId } =
+          createItemSchema.parse(input);
+        const user = await getUserSession(req, res);
+        await assertUserOwnsCategory(user.id, categoryId);
 
         // bump category timestamp when adding an item
         // also update the latest image URL
         await prisma.category.update({
-          where: { id: category.id },
+          where: { id: categoryId },
           data: { updated_at: new Date(), image_url },
         });
 
         return await prisma.item.create({
           data: {
-            categoryId: category.id,
+            categoryId: categoryId,
             name,
             image_url,
             url,
             price,
-            user_id: userId,
-            userId,
+            userId: user.id,
           },
         });
       } catch (err) {
         if (err instanceof ZodError) {
           const errorMeta = err.errors[0];
-          return Promise.reject(
-            new GraphQLError(`${errorMeta.message}`)
-          );
+          return Promise.reject(new GraphQLError(`${errorMeta.message}`));
         } else {
           return Promise.reject(err);
         }
@@ -203,57 +209,58 @@ export const resolver: Resolvers = {
     },
     updateItem: async (_parent, { input }, { req, res }) => {
       try {
-        const { name, id, image_url, url, price, categoryId } = updateItemSchema.parse(input);
-        const userId = await getUserSession(req, res);
-        const category = await getUserCategory(userId, categoryId);
+        const { name, id, image_url, url, price, categoryId } =
+          updateItemSchema.parse(input);
+        const user = await getUserSession(req, res);
+        await Promise.all([
+          assertUserOwnsCategory(user.id, categoryId),
+          assertUserOwnsItem(user.id, id),
+        ]);
 
         // bump category timestamp when adding an item
         // also update the latest image URL
         await prisma.category.update({
-          where: { id: category.id },
+          where: { id: categoryId },
           data: { updated_at: new Date(), image_url },
         });
 
         return await prisma.item.update({
           where: {
-            id
+            id,
           },
           data: {
-            categoryId: category.id,
+            categoryId: categoryId,
             name,
             image_url,
             url,
             price,
-            user_id: userId,
+            userId: user.id,
           },
         });
       } catch (err) {
         if (err instanceof ZodError) {
           const errorMeta = err.errors[0];
-          return Promise.reject(
-            new GraphQLError(`${errorMeta.message}`)
-          );
+          return Promise.reject(new GraphQLError(`${errorMeta.message}`));
         } else {
           return Promise.reject(err);
         }
       }
     },
     deleteCategory: async (_parent, { categoryId }, { req, res }) => {
-      const userId = await getUserSession(req, res);
-      const category = await getUserCategory(userId, categoryId);
+      const user = await getUserSession(req, res);
+      await assertUserOwnsCategory(user.id, categoryId);
+
       await prisma.category.delete({
         where: {
-          id: category.id,
+          id: categoryId,
         },
       });
       return "Success";
     },
     deleteItem: async (_parent, { itemId }, { req, res }) => {
-      const userId = await getUserSession(req, res);
-      // user id matches item, allow deletion
-      await prisma.item.findFirstOrThrow({
-        where: { id: itemId, user_id: userId },
-      });
+      const user = await getUserSession(req, res);
+      await assertUserOwnsItem(user.id, itemId);
+
       await prisma.item.delete({
         where: {
           id: itemId,
