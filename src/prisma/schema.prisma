@@ -10,6 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id String @id @default(uuid())
+
+  @@map(name: "users")
+}
+
 model Category {
   id         Int      @id @default(autoincrement())
   name       String   @db.VarChar(50)
