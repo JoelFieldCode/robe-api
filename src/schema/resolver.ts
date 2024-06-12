@@ -113,7 +113,7 @@ export const resolver: Resolvers = {
         const bunnyUploadFileRes = await fetch(uploadFileUrl, {
           method: "PUT",
           headers: {
-            AccessKey: process.env.BUNNYCDN_API_KEY,
+            "AccessKey": process.env.BUNNYCDN_API_KEY,
             "Content-Type": "application/octet-stream",
           },
           body: buffer,
@@ -190,7 +190,7 @@ export const resolver: Resolvers = {
 
         return await prisma.item.create({
           data: {
-            categoryId: categoryId,
+            categoryId,
             name,
             image_url,
             url,
@@ -229,7 +229,7 @@ export const resolver: Resolvers = {
             id,
           },
           data: {
-            categoryId: categoryId,
+            categoryId,
             name,
             image_url,
             url,
