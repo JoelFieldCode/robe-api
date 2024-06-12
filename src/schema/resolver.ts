@@ -121,7 +121,7 @@ export const resolver: Resolvers = {
         const { name } = createCategorySchema.parse(input);
         const userId = await getUserSession(req, res);
         const category = await prisma.category.create({
-          data: { name, user_id: userId },
+          data: { name, user_id: userId, userId, },
         });
 
         return {
@@ -187,6 +187,7 @@ export const resolver: Resolvers = {
             url,
             price,
             user_id: userId,
+            userId,
           },
         });
       } catch (err) {

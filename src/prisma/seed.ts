@@ -1,39 +1,34 @@
 import { PrismaClient } from "@prisma/client";
+
 const prisma = new PrismaClient();
 
 async function main() {
-    const dressCategory = await prisma.category.upsert({
-        where: { id: 1, },
-        update: {},
-        create: {
-            name: "Dresses",
-            image_url: "https://www.forevernew.com.au/media/wysiwyg/AU-TrioTiles-890x1100-DT-02_5.jpg?auto=webp&width=2500",
-            user_id: "test",
-        },
-    });
+    await prisma.$transaction(async (tx) => {
+        const categories = await tx.category.findMany();
+        for (const category of categories) {
+            await tx.category.update({
+                where: { id: category.id },
+                data: {
+                    userId: category.user_id,
+                },
+            });
+        }
 
-    const redDressItem = await prisma.item.upsert({
-        where: { id: 1, },
-        update: {},
-        create: {
-            name: "Red Dress",
-            price: 40,
-            image_url: "https://www.forevernew.com.au/media/wysiwyg/AU-TrioTiles-890x1100-DT-02_5.jpg?auto=webp&width=2500",
-            url: "https://www.forevernew.com.au/zena-button-up-midi-dress-276218?colour=dark-linked-geo",
-            user_id: "test",
-            category: {
-                connect: {
-                    id: 1,
-                }
-            }
-        },
+        const items = await tx.item.findMany();
+        for (const item of items) {
+            await tx.item.update({
+                where: { id: item.id },
+                data: {
+                    userId: item.user_id,
+                },
+            });
+        }
     });
 }
 
 main()
-    .catch((e) => {
+    .catch(async (e) => {
+        console.error(e);
         process.exit(1);
     })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+    .finally(async () => await prisma.$disconnect());
