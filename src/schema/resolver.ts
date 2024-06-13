@@ -66,7 +66,7 @@ export const resolver: Resolvers = {
     },
     getItem: async (_parent, { itemId }, { req, res }) => {
       const user = await getUserSession(req, res);
-      const item = await assertUserOwnsItem(user.id, itemId)
+      const item = await assertUserOwnsItem(user.id, itemId);
 
       return item;
     },
@@ -100,7 +100,7 @@ export const resolver: Resolvers = {
         const bunnyUploadFileRes = await fetch(uploadFileUrl, {
           method: "PUT",
           headers: {
-            AccessKey: process.env.BUNNYCDN_API_KEY,
+            "AccessKey": process.env.BUNNYCDN_API_KEY,
             "Content-Type": "application/octet-stream",
           },
           body: buffer,
@@ -139,7 +139,7 @@ export const resolver: Resolvers = {
     updateCategory: async (_parent, { input }, { req, res }) => {
       try {
         const { name, id } = updateCategorySchema.parse(input);
-        const user = await getUserSession(req, res)
+        const user = await getUserSession(req, res);
         await assertUserOwnsCategory(user.id, id);
 
         const { _count, ...updatedCategory } = await prisma.category.update({

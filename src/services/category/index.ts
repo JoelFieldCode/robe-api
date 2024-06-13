@@ -7,7 +7,7 @@ export const assertUserOwnsCategory = async (userId: string, categoryId: number)
     where: {
       id: categoryId,
     },
-  })
+  });
 
   if (category.userId !== userId) {
     throw new GraphQLError("Unauthorised", {
@@ -27,7 +27,7 @@ export const assertUserOwnsItem = async (userId: string, itemId: number) => {
     where: {
       id: itemId,
     },
-  })
+  });
 
   if (item.userId !== userId) {
     throw new GraphQLError("Unauthorised", {
