@@ -56,22 +56,7 @@ export const resolver: Resolvers = {
     },
     getCategory: async (_parent, { categoryId }, { req, res }) => {
       const user = await getUserSession(req, res);
-      const category = await prisma.category.findUniqueOrThrow({
-        include: { _count: { select: { items: true } } },
-        where: {
-          id: categoryId,
-        },
-      })
-
-      if (category.userId !== user.id) {
-        throw new GraphQLError("Unauthorised", {
-          extensions: {
-            code: "UNAUTHORISED",
-            http: { status: 403 },
-          },
-        });
-      }
-
+      const category = await assertUserOwnsCategory(user.id, categoryId);
       const { _count, ...rest } = category;
 
       return {
@@ -81,20 +66,7 @@ export const resolver: Resolvers = {
     },
     getItem: async (_parent, { itemId }, { req, res }) => {
       const user = await getUserSession(req, res);
-      const item = await prisma.item.findUniqueOrThrow({
-        where: {
-          id: itemId,
-        },
-      })
-
-      if (item.userId !== user.id) {
-        throw new GraphQLError("Unauthorised", {
-          extensions: {
-            code: "UNAUTHORISED",
-            http: { status: 403 },
-          },
-        });
-      }
+      const item = await assertUserOwnsItem(user.id, itemId)
 
       return item;
     },
@@ -168,20 +140,7 @@ export const resolver: Resolvers = {
       try {
         const { name, id } = updateCategorySchema.parse(input);
         const user = await getUserSession(req, res)
-        const category = await prisma.category.findUniqueOrThrow({
-          where: {
-            id,
-          },
-        })
-
-        if (category.userId !== user.id) {
-          throw new GraphQLError("Unauthorised", {
-            extensions: {
-              code: "UNAUTHORISED",
-              http: { status: 403 },
-            },
-          });
-        }
+        await assertUserOwnsCategory(user.id, id);
 
         const { _count, ...updatedCategory } = await prisma.category.update({
           where: { id },
