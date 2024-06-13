@@ -55,15 +55,13 @@ export const resolver: Resolvers = {
       }));
     },
     getCategory: async (_parent, { categoryId }, { req, res }) => {
-      const [user, category] = await Promise.all([
-        getUserSession(req, res),
-        prisma.category.findUniqueOrThrow({
-          include: { _count: { select: { items: true } } },
-          where: {
-            id: categoryId,
-          },
-        })
-      ]);
+      const user = await getUserSession(req, res);
+      const category = await prisma.category.findUniqueOrThrow({
+        include: { _count: { select: { items: true } } },
+        where: {
+          id: categoryId,
+        },
+      })
 
       if (category.userId !== user.id) {
         throw new GraphQLError("Unauthorised", {
@@ -82,14 +80,12 @@ export const resolver: Resolvers = {
       };
     },
     getItem: async (_parent, { itemId }, { req, res }) => {
-      const [user, item] = await Promise.all([
-        getUserSession(req, res),
-        prisma.item.findUniqueOrThrow({
-          where: {
-            id: itemId,
-          },
-        }),
-      ]);
+      const user = await getUserSession(req, res);
+      const item = await prisma.item.findUniqueOrThrow({
+        where: {
+          id: itemId,
+        },
+      })
 
       if (item.userId !== user.id) {
         throw new GraphQLError("Unauthorised", {
@@ -171,17 +167,30 @@ export const resolver: Resolvers = {
     updateCategory: async (_parent, { input }, { req, res }) => {
       try {
         const { name, id } = updateCategorySchema.parse(input);
-        const user = await getUserSession(req, res);
-        await assertUserOwnsCategory(user.id, id);
+        const user = await getUserSession(req, res)
+        const category = await prisma.category.findUniqueOrThrow({
+          where: {
+            id,
+          },
+        })
 
-        const { _count, ...category } = await prisma.category.update({
+        if (category.userId !== user.id) {
+          throw new GraphQLError("Unauthorised", {
+            extensions: {
+              code: "UNAUTHORISED",
+              http: { status: 403 },
+            },
+          });
+        }
+
+        const { _count, ...updatedCategory } = await prisma.category.update({
           where: { id },
           data: { name },
           include: { _count: { select: { items: true } } },
         });
 
         return {
-          ...category,
+          ...updatedCategory,
           itemCount: _count.items,
         };
       } catch (err) {
