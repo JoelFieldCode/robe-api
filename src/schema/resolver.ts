@@ -24,11 +24,9 @@ const updateItemSchema = createItemSchema.extend({
 });
 
 const createCategorySchema = z.object({
-  name: z
-    .string()
-    .max(50, {
-      message: "Category name must not be longer than 100 characters",
-    }),
+  name: z.string().max(50, {
+    message: "Category name must not be longer than 100 characters",
+  }),
 });
 
 const updateCategorySchema = createCategorySchema.extend({
@@ -60,13 +58,12 @@ export const resolver: Resolvers = {
       const user = await getUserSession(req, res);
       await assertUserOwnsCategory(user.id, categoryId);
 
-      const { _count, ...rest } =
-        await prisma.category.findUniqueOrThrow({
-          include: { _count: { select: { items: true } } },
-          where: {
-            id: categoryId,
-          },
-        });
+      const { _count, ...rest } = await prisma.category.findUniqueOrThrow({
+        include: { _count: { select: { items: true } } },
+        where: {
+          id: categoryId,
+        },
+      });
 
       return {
         ...rest,
@@ -74,14 +71,25 @@ export const resolver: Resolvers = {
       };
     },
     getItem: async (_parent, { itemId }, { req, res }) => {
-      const user = await getUserSession(req, res);
-      await assertUserOwnsItem(user.id, itemId);
+      const [user, item] = await Promise.all([
+        getUserSession(req, res),
+        prisma.item.findUniqueOrThrow({
+          where: {
+            id: itemId,
+          },
+        }),
+      ]);
 
-      return await prisma.item.findUniqueOrThrow({
-        where: {
-          id: itemId,
-        },
-      });
+      if (item.userId !== user.id) {
+        throw new GraphQLError("Unauthorised", {
+          extensions: {
+            code: "UNAUTHORISED",
+            http: { status: 403 },
+          },
+        });
+      }
+
+      return item;
     },
   },
   Category: {
@@ -113,7 +121,7 @@ export const resolver: Resolvers = {
         const bunnyUploadFileRes = await fetch(uploadFileUrl, {
           method: "PUT",
           headers: {
-            "AccessKey": process.env.BUNNYCDN_API_KEY,
+            AccessKey: process.env.BUNNYCDN_API_KEY,
             "Content-Type": "application/octet-stream",
           },
           body: buffer,
@@ -132,7 +140,7 @@ export const resolver: Resolvers = {
         const { name } = createCategorySchema.parse(input);
         const user = await getUserSession(req, res);
         const category = await prisma.category.create({
-          data: { name, userId: user.id, },
+          data: { name, userId: user.id },
         });
 
         return {
