@@ -24,11 +24,9 @@ const updateItemSchema = createItemSchema.extend({
 });
 
 const createCategorySchema = z.object({
-  name: z
-    .string()
-    .max(50, {
-      message: "Category name must not be longer than 100 characters",
-    }),
+  name: z.string().max(50, {
+    message: "Category name must not be longer than 100 characters",
+  }),
 });
 
 const updateCategorySchema = createCategorySchema.extend({
@@ -58,15 +56,8 @@ export const resolver: Resolvers = {
     },
     getCategory: async (_parent, { categoryId }, { req, res }) => {
       const user = await getUserSession(req, res);
-      await assertUserOwnsCategory(user.id, categoryId);
-
-      const { _count, ...rest } =
-        await prisma.category.findUniqueOrThrow({
-          include: { _count: { select: { items: true } } },
-          where: {
-            id: categoryId,
-          },
-        });
+      const category = await assertUserOwnsCategory(user.id, categoryId);
+      const { _count, ...rest } = category;
 
       return {
         ...rest,
@@ -75,13 +66,9 @@ export const resolver: Resolvers = {
     },
     getItem: async (_parent, { itemId }, { req, res }) => {
       const user = await getUserSession(req, res);
-      await assertUserOwnsItem(user.id, itemId);
+      const item = await assertUserOwnsItem(user.id, itemId);
 
-      return await prisma.item.findUniqueOrThrow({
-        where: {
-          id: itemId,
-        },
-      });
+      return item;
     },
   },
   Category: {
@@ -132,7 +119,7 @@ export const resolver: Resolvers = {
         const { name } = createCategorySchema.parse(input);
         const user = await getUserSession(req, res);
         const category = await prisma.category.create({
-          data: { name, userId: user.id, },
+          data: { name, userId: user.id },
         });
 
         return {
@@ -155,14 +142,14 @@ export const resolver: Resolvers = {
         const user = await getUserSession(req, res);
         await assertUserOwnsCategory(user.id, id);
 
-        const { _count, ...category } = await prisma.category.update({
+        const { _count, ...updatedCategory } = await prisma.category.update({
           where: { id },
           data: { name },
           include: { _count: { select: { items: true } } },
         });
 
         return {
-          ...category,
+          ...updatedCategory,
           itemCount: _count.items,
         };
       } catch (err) {

@@ -2,8 +2,14 @@ import { GraphQLError } from "graphql";
 import { prisma } from "../../database/prismaClient";
 
 export const assertUserOwnsCategory = async (userId: string, categoryId: number) => {
-  const userCategories = await prisma.user.findUnique({ where: { id: userId } }).categories();
-  if (!userCategories.find((category) => category.id === categoryId)) {
+  const category = await prisma.category.findUniqueOrThrow({
+    include: { _count: { select: { items: true } } },
+    where: {
+      id: categoryId,
+    },
+  });
+
+  if (category.userId !== userId) {
     throw new GraphQLError("Unauthorised", {
       extensions: {
         code: "UNAUTHORISED",
@@ -11,11 +17,19 @@ export const assertUserOwnsCategory = async (userId: string, categoryId: number)
       },
     });
   }
+
+  return category;
+
 };
 
 export const assertUserOwnsItem = async (userId: string, itemId: number) => {
-  const userItems = await prisma.user.findUnique({ where: { id: userId } }).items();
-  if (!userItems.find((item) => item.id === itemId)) {
+  const item = await prisma.item.findUniqueOrThrow({
+    where: {
+      id: itemId,
+    },
+  });
+
+  if (item.userId !== userId) {
     throw new GraphQLError("Unauthorised", {
       extensions: {
         code: "UNAUTHORISED",
@@ -23,4 +37,6 @@ export const assertUserOwnsItem = async (userId: string, itemId: number) => {
       },
     });
   }
+
+  return item;
 };
