@@ -55,15 +55,26 @@ export const resolver: Resolvers = {
       }));
     },
     getCategory: async (_parent, { categoryId }, { req, res }) => {
-      const user = await getUserSession(req, res);
-      await assertUserOwnsCategory(user.id, categoryId);
+      const [user, category] = await Promise.all([
+        getUserSession(req, res),
+        prisma.category.findUniqueOrThrow({
+          include: { _count: { select: { items: true } } },
+          where: {
+            id: categoryId,
+          },
+        })
+      ]);
 
-      const { _count, ...rest } = await prisma.category.findUniqueOrThrow({
-        include: { _count: { select: { items: true } } },
-        where: {
-          id: categoryId,
-        },
-      });
+      if (category.userId !== user.id) {
+        throw new GraphQLError("Unauthorised", {
+          extensions: {
+            code: "UNAUTHORISED",
+            http: { status: 403 },
+          },
+        });
+      }
+
+      const { _count, ...rest } = category;
 
       return {
         ...rest,
