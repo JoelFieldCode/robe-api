@@ -13,6 +13,7 @@ import { middleware } from "supertokens-node/framework/express";
 import { errorHandler } from "supertokens-node/framework/express";
 import Dashboard from "supertokens-node/recipe/dashboard";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 import Session from "supertokens-node/recipe/session";
 import ThirdParty from "supertokens-node/recipe/thirdparty";
 
@@ -69,6 +70,9 @@ supertokens.init({
     }),
     Session.init(), // initializes session features
     Dashboard.init(),
+    EmailVerification.init({
+      mode: "REQUIRED", // or "OPTIONAL"
+    }),
   ]
 });
 
