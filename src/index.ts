@@ -14,6 +14,7 @@ import { errorHandler } from "supertokens-node/framework/express";
 import Dashboard from "supertokens-node/recipe/dashboard";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Session from "supertokens-node/recipe/session";
+import ThirdParty from "supertokens-node/recipe/thirdparty";
 
 supertokens.init({
   framework: "express",
@@ -53,6 +54,19 @@ supertokens.init({
   },
   recipeList: [
     EmailPassword.init(), // initializes signin / sign up features
+    ThirdParty.init({
+      signInAndUpFeature: {
+        providers: [{
+          config: {
+            thirdPartyId: "google",
+            clients: [{
+              clientId: process.env.GOOGLE_CLIENT_ID,
+              clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            }]
+          }
+        }]
+      }
+    }),
     Session.init(), // initializes session features
     Dashboard.init(),
   ]
