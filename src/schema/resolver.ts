@@ -89,15 +89,12 @@ export const resolver: Resolvers = {
       await getUserSession(req, res);
       // TODO we aren't really converting it to webp yet
       const path = `images/${v4()}.webp`;
-      const uploadFileUrl = new URL(
-        `/${process.env.BUNNYCDN_STORAGE_ZONE}/${path}`,
-        `https://${process.env.BUNNY_STORAGE_API_HOST}`
-      );
+      const baseUrl = `${process.env.BUNNY_STORAGE_API_HOST}/${process.env.BUNNYCDN_STORAGE_ZONE}/${path}`
 
       try {
         const fileArrayBuffer = await image.arrayBuffer();
         const buffer = Buffer.from(fileArrayBuffer);
-        const bunnyUploadFileRes = await fetch(uploadFileUrl, {
+        const bunnyUploadFileRes = await fetch(baseUrl, {
           method: "PUT",
           headers: {
             "AccessKey": process.env.BUNNYCDN_API_KEY,
