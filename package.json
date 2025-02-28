@@ -43,6 +43,7 @@
     "jsonwebtoken": "^8.5.1",
     "prisma": "6.0.1",
     "supertokens-node": "^16.7.5",
+    "tslint": "^5.20.1",
     "uuid": "^9.0.1",
     "ws": "^8.18.0",
     "zod": "^3.23.8"
@@ -64,7 +65,6 @@
     "supertest": "^4.0.2",
     "ts-jest": "^28.0.8",
     "ts-node": "10.9.2",
-    "tslint": "^5.20.1",
     "typescript": "^4.7.0"
   },
   "peerDependencies": {
