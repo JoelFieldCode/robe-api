@@ -67,7 +67,7 @@ supertokens.init({
               }
           ]
       }
-  }), // initializes signin / sign up features 
+  }), // initializes signin / sign up features
   ]
 });
 
